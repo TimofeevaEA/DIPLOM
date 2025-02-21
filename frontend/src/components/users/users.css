@@ -1,0 +1,249 @@
+.user-management {
+    padding: 40px 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #000000;
+}
+
+h2 {
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.form-section {
+    background: #C62E77;
+    padding: 30px;
+    border-radius: 30px;
+    margin-bottom: 40px;
+    color: #ffffff;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ffffff;
+    border-radius: 15px;
+    font-size: 16px;
+    color: #000000;
+    background: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.submit-btn, .cancel-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.submit-btn {
+    background: #77d87a;
+    color: white;
+}
+
+.cancel-btn {
+    background: #ee6056;
+    color: white;
+}
+
+.users-table {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #a84a4a;
+}
+
+th {
+    background-color: #C62E77;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.edit-btn, .delete-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.edit-btn {
+    background: #76aedb;
+    color: white;
+}
+
+.delete-btn {
+    background: #f44336;
+    color: white;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .users-table {
+        overflow-x: auto;
+    }
+    
+    .form-section {
+        padding: 20px;
+    }
+    
+    .container {
+        padding: 0 10px;
+    }
+}
+
+/* Эффект при фокусе на поле ввода */
+input:focus, select:focus {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    outline: none;
+    border-color: #ffffff;
+}
+
+/* Анимация для всех кнопок */
+.submit-btn, .cancel-btn, .edit-btn, .delete-btn {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Эффект наведения для кнопки создания/обновления */
+.submit-btn:hover {
+    background: #5bc75e;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(119, 216, 122, 0.4);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+/* Эффект наведения для кнопки отмены */
+.cancel-btn:hover {
+    background: #d64b41;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(238, 96, 86, 0.4);
+}
+
+.cancel-btn:active {
+    transform: translateY(0);
+}
+
+/* Эффект наведения для кнопки редактирования */
+.edit-btn:hover {
+    background: #5590bd;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(118, 174, 219, 0.4);
+}
+
+.edit-btn:active {
+    transform: translateY(0);
+}
+
+/* Эффект наведения для кнопки удаления */
+.delete-btn:hover {
+    background: #d32f2f;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+}
+
+.delete-btn:active {
+    transform: translateY(0);
+}
+
+/* Анимация для строк таблицы */
+tr {
+    transition: all 0.3s ease;
+}
+
+tr:hover {
+    background-color: rgba(198, 46, 119, 0.1);
+}
+
+/* Пульсация для placeholder при фокусе */
+@keyframes placeholderPulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+input:focus::placeholder {
+    animation: placeholderPulse 2s infinite;
+}
+
+/* Эффект волны для кнопок */
+.submit-btn::after, .cancel-btn::after, .edit-btn::after, .delete-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease-out, height 0.6s ease-out;
+}
+
+.submit-btn:active::after, 
+.cancel-btn:active::after, 
+.edit-btn:active::after, 
+.delete-btn:active::after {
+    width: 200px;
+    height: 200px;
+    opacity: 0;
+}
+
+/* Стили для формы */
+.form-section {
+    background: #C62E77;
+    padding: 30px;
+    border-radius: 30px;
+    margin-bottom: 40px;
+    color: #ffffff;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(198, 46, 119, 0.3);
+}
+
+.form-section:hover {
+    box-shadow: 0 8px 25px rgba(198, 46, 119, 0.4);
+    transform: translateY(-5px);
+}
+
+/* Анимация для заголовков */
+h1, h2 {
+    transition: all 0.3s ease;
+}
+
+h1:hover, h2:hover {
+    transform: scale(1.02);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input::placeholder {
+    color: #ffffff;  /* Цвет placeholder */
+}

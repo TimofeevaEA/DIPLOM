@@ -1,0 +1,16 @@
+.promo {
+    margin-bottom: 60px;
+    padding: 120px 0 60px; 
+}
+
+.promo_content {
+    display: flex;
+}
+
+.promo_text {
+    width: 480px;
+    font-family: 'Montserrat';
+    font-weight: 800;
+    font-size: 50px;
+    color: #000;
+}

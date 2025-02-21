@@ -1,0 +1,102 @@
+.header {
+    position: fixed; /* Закрепляем шапку */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Убедитесь, что шапка будет поверх других элементов */
+    background-color: #fff; /* Белый фон шапки, если нужно */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Добавляем тень для визуального эффекта */
+    padding: 20px 0; /* Отступы для шапки */
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header_item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header_link {
+    display: flex;
+    align-items: center;
+    color: #000;
+    text-decoration: none;
+}
+
+.header_text {
+    text-align: left;
+    margin: 0;
+    font-weight: bold;
+    font-size: 20px;
+    margin-left: 8px;
+}
+
+.header_link:hover {
+    color: #c62e77;
+}
+
+/* Боковое меню */
+.side_menu {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: #c62e77; /* Цвет фона модального окна */
+    color: white; /* Цвет текста в модальном окне */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    transition: left 0.3s ease;
+    z-index: 1001;
+}
+
+.side_menu.open {
+    left: 0;
+}
+
+.side_menu .close_button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.menu_list {
+    list-style: none;
+    padding: 0;
+    margin: 50px 0 0;
+}
+
+.menu_list li {
+    margin: 15px 0;
+}
+
+.menu_list a {
+    text-decoration: none;
+    font-size: 18px;
+    color: white; /* Белые ссылки в модальном окне */
+    transition: color 0.3s;
+}
+
+.menu_list a:hover {
+    color: #fff; /* Белые ссылки остаются белыми при наведении */
+}
+
+/* Полупрозрачный фон */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}

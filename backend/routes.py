@@ -55,12 +55,27 @@ def update_user(user_id):
         user = User.query.get(user_id)
         if user is None:
             return jsonify({'error': 'Пользователь не найден'}), 404
-        user.name = data.get('name', user.name)
-        user.email = data.get('email', user.email)
-        user.phone = data.get('phone', user.phone)
-        user.password = data.get('password', user.password)
-        user.birth_date = data.get('birth_date', user.birth_date)
-        user.role = data.get('role', user.role)
+
+        # Обновляем простые поля
+        if 'name' in data:
+            user.name = data['name']
+        if 'email' in data:
+            user.email = data['email']
+        if 'phone' in data:
+            user.phone = data['phone']
+        if 'password' in data and data['password']:  # Проверяем, что пароль не пустой
+            user.password = data['password']
+        if 'role' in data:
+            user.role = data['role']
+            
+        # Обрабатываем дату рождения
+        if 'birth_date' in data and data['birth_date']:
+            try:
+                birth_date = datetime.strptime(data['birth_date'], '%Y-%m-%d').date()
+                user.birth_date = birth_date
+            except ValueError:
+                return jsonify({'error': 'Неверный формат даты'}), 400
+
         db.session.commit()
         return jsonify(user.to_json()), 200
     except Exception as e:

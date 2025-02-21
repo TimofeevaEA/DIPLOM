@@ -1,0 +1,113 @@
+.directions {
+    padding: 0 0 30px;
+    position: relative;
+}
+
+.container h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 50px;
+    text-align: right;
+    width: 100%;  /* Добавить это для гарантии, что текст будет справа */
+    margin: 0;  /* Убираем лишние отступы, если они есть */
+}
+
+
+.directions_arrows {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 70px;
+    right: 20px;
+}
+
+.directions_arrows svg {
+    margin: 5px 0;
+}
+
+.directions_slider {
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+    margin-top: 100px; /* Понижаем отступ, чтобы заголовок был ближе */
+}
+
+.directions_slider_container {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.directions_card {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    width: 714px;
+    height: 392px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.66);
+    background: #fff;
+    padding: 20px;
+    margin-right: 20px;
+}
+
+.directions_card_img {
+    border-radius: 20px;
+    width: 300px;
+    height: 350px;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.directions_card_content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.directions_card_title {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 110%;
+    margin-bottom: 10px;
+}
+
+.directions_card_description {
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 110%;
+}
+
+.directions_button {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.directions_button svg {
+    border-radius: 50%;
+    background-color: #C62E77;
+    padding: 10px;
+}
+
+/* Стиль для кнопок слайдера */
+.directions_slider_button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.directions_slider_button.left {
+    left: 10px;
+}
+
+.directions_slider_button.right {
+    right: 10px;
+}
