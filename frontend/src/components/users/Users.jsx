@@ -12,6 +12,8 @@ const Users = () => {
         role: 'user'
     });
     const [editingId, setEditingId] = useState(null);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     // Загрузка пользователей
     const fetchUsers = async () => {
@@ -31,10 +33,13 @@ const Users = () => {
     // Создание/обновление пользователя
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+        setSuccess('');
+        
         try {
             const url = editingId 
-                ? `http://localhost:3000/api/users/${editingId}`
-                : 'http://localhost:3000/api/users';
+                ? `http://localhost:5000/api/users/${editingId}`
+                : 'http://localhost:5000/api/users';
             
             const method = editingId ? 'PATCH' : 'POST';
             
@@ -46,20 +51,25 @@ const Users = () => {
                 body: JSON.stringify(formData),
             });
 
-            if (response.ok) {
-                fetchUsers();
-                setFormData({
-                    name: '',
-                    email: '',
-                    phone: '',
-                    password: '',
-                    birth_date: '',
-                    role: 'user'
-                });
-                setEditingId(null);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Что-то пошло не так');
             }
+
+            setSuccess(editingId ? 'Пользователь успешно обновлен' : 'Пользователь успешно создан');
+            fetchUsers();
+            setFormData({
+                name: '',
+                email: '',
+                phone: '',
+                password: '',
+                birth_date: '',
+                role: 'user'
+            });
+            setEditingId(null);
         } catch (error) {
-            console.error('Ошибка:', error);
+            setError(error.message);
         }
     };
 
@@ -106,6 +116,21 @@ const Users = () => {
             <div className="container">
                 <h1>Управление пользователями</h1>
                 
+                {/* Выносим сообщения в отдельный контейнер */}
+                <div className="messages-container">
+                    {error && (
+                        <div className="error-message">
+                            {error}
+                        </div>
+                    )}
+                    
+                    {success && (
+                        <div className="success-message">
+                            {success}
+                        </div>
+                    )}
+                </div>
+
                 {/* Форма создания/редактирования */}
                 <div className="form-section">
                     <h2>{editingId ? 'Редактировать пользователя' : 'Создать пользователя'}</h2>

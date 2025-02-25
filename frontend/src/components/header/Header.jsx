@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './header.css';
 import menuIcon from '/img/header/menu.png';
 import profileIcon from '/img/header/profile.png';
+import AuthModal from '../authorization/authorization';
 
 function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [currentUser, setCurrentUser] = useState(() => {
+        // Получаем пользователя из localStorage при инициализации
+        const savedUser = localStorage.getItem('currentUser');
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
     const [scrollPosition, setScrollPosition] = useState(0);
 
     const toggleMenu = () => {
@@ -29,6 +36,28 @@ function Header() {
         setIsMenuOpen(!isMenuOpen);
     };
 
+    const handleLogin = (user) => {
+        setCurrentUser(user);
+        // Сохраняем пользователя в localStorage
+        localStorage.setItem('currentUser', JSON.stringify(user));
+    };
+
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/api/authorization/logout', {
+                method: 'POST',
+            });
+
+            if (response.ok) {
+                setCurrentUser(null);
+                // Удаляем пользователя из localStorage
+                localStorage.removeItem('currentUser');
+            }
+        } catch (error) {
+            console.error('Ошибка при выходе:', error);
+        }
+    };
+
     return (
         <header className="header">
             <div className="container">
@@ -40,7 +69,26 @@ function Header() {
                     <p className="header_text">МЕНЮ</p>
                 </a>
                 <a href="#" className="header_link logo">LOGO</a>
-                <a href="#" className="header_link"><img src={profileIcon} alt="Профиль" /></a>
+                <div className="profile-section">
+                    {currentUser ? (
+                        <>
+                            <span className="user-name">{currentUser.name}</span>
+                            <a href="#" className="header_link" onClick={(e) => {
+                                e.preventDefault();
+                                handleLogout();
+                            }}>
+                                <img src={profileIcon} alt="Выйти" />
+                            </a>
+                        </>
+                    ) : (
+                        <a href="#" className="header_link" onClick={(e) => {
+                            e.preventDefault();
+                            setIsAuthModalOpen(true);
+                        }}>
+                            <img src={profileIcon} alt="Войти" />
+                        </a>
+                    )}
+                </div>
             </div>
 
             {/* Боковое меню */}
@@ -55,6 +103,12 @@ function Header() {
 
             {/* Полупрозрачный фон для закрытия меню */}
             {isMenuOpen && <div className="overlay" onClick={toggleMenu}></div>}
+
+            <AuthModal 
+                isOpen={isAuthModalOpen}
+                onClose={() => setIsAuthModalOpen(false)}
+                onLogin={handleLogin}
+            />
         </header>
     );
 }

@@ -1,18 +1,9 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from  flask_cors import CORS
+from . import create_app, db
 
-app = Flask(__name__)
-CORS(app)
+app = create_app()
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///iva.sqlite'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-import routes
 with app.app_context():
     db.create_all()
-
 
 if __name__ == '__main__':
     app.run(debug=True)
