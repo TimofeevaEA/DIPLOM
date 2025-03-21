@@ -37,9 +37,16 @@ function Header() {
     };
 
     const handleLogin = (user) => {
-        setCurrentUser(user);
+        // Добавляем роль в объект пользователя, если её нет
+        const userWithRole = {
+            ...user,
+            role: user.role || 'user' // По умолчанию роль 'user', если не указана
+        };
+        setCurrentUser(userWithRole);
         // Сохраняем пользователя в localStorage
-        localStorage.setItem('currentUser', JSON.stringify(user));
+        localStorage.setItem('currentUser', JSON.stringify(userWithRole));
+        // Добавляем событие для обновления App
+        window.dispatchEvent(new Event('authChange'));
     };
 
     const handleLogout = async () => {
@@ -52,6 +59,8 @@ function Header() {
                 setCurrentUser(null);
                 // Удаляем пользователя из localStorage
                 localStorage.removeItem('currentUser');
+                // Добавляем событие для обновления App
+                window.dispatchEvent(new Event('authChange'));
             }
         } catch (error) {
             console.error('Ошибка при выходе:', error);
@@ -98,6 +107,13 @@ function Header() {
                     <li><a href="#section1">Расписание</a></li>
                     <li><a href="#section2">Спорт</a></li>
                     <li><a href="#section3">Питание</a></li>
+                    {currentUser?.role === 'admin' && (
+                        <>
+                            <li><a href="/direction-edit">Управление направлениями</a></li>
+                            <li><a href="/users">Пользователи</a></li>
+                            <li><a href="/categories">Категории</a></li>
+                        </>
+                    )}
                 </ul>
             </div>
 

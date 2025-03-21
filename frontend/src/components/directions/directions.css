@@ -3,14 +3,6 @@
     position: relative;
 }
 
-.container h1 {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 800;
-    font-size: 50px;
-    text-align: right;
-    width: 100%;  /* Добавить это для гарантии, что текст будет справа */
-    margin: 0;  /* Убираем лишние отступы, если они есть */
-}
 
 
 .directions_arrows {
@@ -110,4 +102,195 @@
 
 .directions_slider_button.right {
     right: 10px;
+}
+
+
+.form-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #333;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.direction-photo {
+    max-width: 200px;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.submit-btn,
+.cancel-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.submit-btn {
+    background: #C62E77;
+    color: white;
+}
+
+.cancel-btn {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.directions-list {
+    margin-top: 30px;
+}
+
+.direction-item {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.direction-content h3 {
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.direction-content p {
+    margin: 0;
+    color: #666;
+}
+
+.direction-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-btn,
+.delete-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background: #4CAF50;
+    color: white;
+}
+
+.delete-btn {
+    background: #f44336;
+    color: white;
+}
+
+.message {
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.message.success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.message.error {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #000000;
+}
+h1, h2 {
+    transition: all 0.3s ease;
+}
+
+h1:hover, h2:hover {
+    transform: scale(1.02);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.direction-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 40px;
+    padding: 0 20px;
+}
+
+.direction-button {
+    padding: 12px 24px;
+    background: #C62E77;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.direction-button:hover {
+    background: #d64d8e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(198, 46, 119, 0.3);
+}
+
+.direction-button.active {
+    background: #8C1B52;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translateY(1px);
+}
+
+/* Медиа-запрос для мобильных устройств */
+@media (max-width: 768px) {
+    .direction-buttons {
+        gap: 8px;
+    }
+
+    .direction-button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
 }

@@ -26,11 +26,21 @@ body {
 .container {
     max-width: 1000px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 20px 20px;
     flex-wrap: wrap;
 }
 
 .App {
     padding-top: 100px;
 }
+
+.container h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 50px;
+    text-align: right;
+    width: 100%;  /* Добавить это для гарантии, что текст будет справа */
+    margin: 0;  /* Убираем лишние отступы, если они есть */
+}
+
 

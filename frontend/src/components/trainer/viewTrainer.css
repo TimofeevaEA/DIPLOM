@@ -1,0 +1,136 @@
+.trainers-view {
+    padding: 40px 0;
+    background: #fff;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.trainers-title {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 40px;
+    color: #000;
+}
+
+.trainers-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 30px;
+    overflow-x: auto;
+    padding-bottom: 20px;
+}
+
+.trainer-card {
+    position: relative;
+    min-width: 240px;
+    flex: 0 0 auto;
+}
+
+.trainers-grid::-webkit-scrollbar {
+    height: 8px;
+}
+
+.trainers-grid::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.trainers-grid::-webkit-scrollbar-thumb {
+    background: #C62E77;
+    border-radius: 4px;
+}
+
+.trainers-grid::-webkit-scrollbar-thumb:hover {
+    background: #a02461;
+}
+
+.trainer-image-container {
+    position: relative;
+    width: 240px;
+    height: 320px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.trainer-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.trainer-info {
+    padding: 15px;
+    background: white;
+    border-radius: 0 0 20px 20px;
+    border: none;
+    border-bottom: 1px solid #C62E77;
+    border-left: 1px solid #C62E77;
+    border-right: 1px solid #C62E77;
+}
+
+.trainer-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+    color: #000;
+}
+
+.trainer-specialization {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.read-more-btn {
+    background: none;
+    border: none;
+    color: #C62E77;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.read-more-btn:hover {
+    color: #a02461;
+}
+
+/* Убираем clip-path и розовый фон за карточкой */
+.trainer-card::before {
+    display: none;
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    .trainers-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .trainers-title {
+        font-size: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .trainers-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .trainers-title {
+        font-size: 28px;
+    }
+}

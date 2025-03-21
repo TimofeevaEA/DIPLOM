@@ -1,0 +1,286 @@
+/* Используем БЭМ для именования классов */
+.content {
+  width: 100%;
+  padding: 20px;
+  background: #fff;
+}
+
+.content__header {
+  margin-bottom: 30px;
+}
+
+.week-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.week-navigation__btn {
+  background: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.week-navigation__btn:hover:not(:disabled) {
+  background: #f5f5f5;
+  border-color: #C62E77;
+  color: #C62E77;
+}
+
+.week-navigation__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.week-navigation h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.time-filters {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.time-filter__btn {
+  padding: 8px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  background: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.time-filter__btn:hover {
+  background: #f5f5f5;
+}
+
+.time-filter__btn.active {
+  background: #C62E77;
+  border-color: #C62E77;
+  color: white;
+}
+
+.schedule {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.schedule__header {
+  display: flex;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.schedule-container {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .schedule-header {
+    display: flex;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .time-column {
+    width: 80px;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    border-right: 1px solid #e0e0e0;
+  }
+  
+  .day-column {
+    flex: 1;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    border-right: 1px solid #e0e0e0;
+  }
+  
+  .day-column:last-child {
+    border-right: none;
+  }
+  
+  .schedule-body {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .time-row {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .time-row:last-child {
+    border-bottom: none;
+  }
+  
+  .time-cell {
+    width: 80px;
+    padding: 10px;
+    text-align: center;
+    border-right: 1px solid #e0e0e0;
+    background: #f8f8f8;
+  }
+  
+  .day-cell {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e0e0e0;
+  }
+  
+  .day-cell:last-child {
+    border-right: none;
+  }
+  
+  .room-cell {
+    flex: 1;
+    border-bottom: 1px solid #e0e0e0;
+    min-height: 120px;
+    position: relative;
+  }
+  
+  .room-cell:last-child {
+    border-bottom: none;
+  }
+  
+  .schedule-cell-content {
+    padding: 10px;
+    height: 100%;
+    background: #fce4ec;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .schedule-cell-content:hover {
+    background: #f8bbd0;
+  }
+  
+  .training-item {
+    padding: 5px 0;
+  }
+  
+  .training-item + .training-item {
+    margin-top: 5px;
+  }
+  
+  .divider {
+    height: 1px;
+    background: #e0e0e0;
+    margin: 5px 0;
+  }
+  
+  .training-name {
+    font-weight: bold;
+    font-size: 14px;
+    color: #C62E77;
+  }
+  
+  .trainer-name {
+    font-size: 12px;
+    color: #666;
+  }
+  
+  .capacity {
+    font-size: 12px;
+    color: #888;
+  }
+  
+  .schedule-cell-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 80px;
+    color: #bbb;
+    cursor: pointer;
+    font-size: 24px;
+    transition: all 0.2s;
+  }
+  
+  .schedule-cell-empty:hover {
+    color: #C62E77;
+    background: #fafafa;
+  }
+  
+  /* Адаптивность */
+  @media (max-width: 1024px) {
+    .schedule {
+        overflow-x: auto;
+    }
+    
+    .schedule__header,
+    .time-row {
+        min-width: 800px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .week-navigation h2 {
+        font-size: 20px;
+    }
+    
+    .time-filter__btn {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .content {
+        padding: 10px;
+    }
+    
+    .week-navigation {
+        gap: 10px;
+    }
+    
+    .week-navigation h2 {
+        font-size: 16px;
+    }
+    
+    .time-filters {
+        flex-wrap: wrap;
+    }
+  }
+
+.week-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.create-week-btn {
+  padding: 8px 16px;
+  background: #C62E77;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.create-week-btn:hover {
+  background: #a02461;
+}

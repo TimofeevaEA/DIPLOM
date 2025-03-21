@@ -1,0 +1,135 @@
+.trainers-container {
+    padding: 20px;
+}
+
+.trainer-item {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.trainer-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.trainer-photo {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.info {
+    flex-grow: 1;
+}
+
+.trainer-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.form-section {
+    background: #C62E77;
+    padding: 30px;
+    border-radius: 30px;
+    margin-bottom: 40px;
+    color: #ffffff;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.messages-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.message {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    animation: slideIn 0.3s ease-in-out;
+}
+
+.message.success {
+    background: #4caf50;
+    color: white;
+}
+
+.message.error {
+    background: #f44336;
+    color: white;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Используем те же стили для кнопок, что и в других компонентах */
+.submit-btn, .cancel-btn, .edit-btn, .delete-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.submit-btn {
+    background: #77d87a;
+    color: white;
+}
+
+.cancel-btn {
+    background: #ee6056;
+    color: white;
+}
+
+.edit-btn {
+    background: #76aedb;
+    color: white;
+}
+
+.delete-btn {
+    background: #f44336;
+    color: white;
+}

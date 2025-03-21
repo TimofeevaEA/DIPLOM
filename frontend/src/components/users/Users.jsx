@@ -105,7 +105,7 @@ const Users = () => {
             email: user.email || '',
             phone: user.phone || '',
             password: '',
-            birth_date: formattedDate, // Используем отформатированную дату
+            birth_date: formattedDate, 
             role: user.role || 'user'
         });
         setEditingId(user.id);
@@ -187,6 +187,7 @@ const Users = () => {
                             >
                                 <option value="user">Пользователь</option>
                                 <option value="admin">Администратор</option>
+                                <option value="trainer">Тренер</option>
                             </select>
                         </div>
                         <button type="submit" className="submit-btn">
