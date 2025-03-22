@@ -11,76 +11,53 @@ schedule_bp = Blueprint('schedule', __name__)
 @schedule_bp.route('/api/schedule/week/<int:week_id>', methods=['GET'])
 def get_schedule_by_week(week_id):
     try:
-        print(f"Получаем расписание для недели {week_id}")
         schedules = Schedule.query.filter_by(week_id=week_id).all()
-        print(f"Найдено записей: {len(schedules)}")
-        
         result = []
         for schedule in schedules:
-            try:
-                print(f"Обработка записи: ID={schedule.id}, день={schedule.day_of_week}")
-                schedule_data = {
-                    'id': schedule.id,
-                    'week_id': schedule.week_id,
-                    'day_of_week': schedule.day_of_week.name,
-                    'start_time': schedule.start_time.strftime('%H:%M'),
-                    'direction_id': schedule.direction_id,
-                    'room': schedule.room,
-                    'trainer_id': schedule.trainer_id,
-                    'capacity': schedule.capacity,
-                    'direction_name': schedule.direction.name if schedule.direction else None,
-                    'trainer_name': schedule.trainer.user.name if schedule.trainer and schedule.trainer.user else None
-                }
-                print(f"Подготовлены данные: {schedule_data}")
-                result.append(schedule_data)
-            except Exception as e:
-                print(f"Ошибка при обработке записи расписания: {str(e)}")
-                continue
-
-        print(f"Успешно обработано записей: {len(result)}")
+            result.append({
+                'id': schedule.id,
+                'week_id': schedule.week_id,
+                'day_of_week': schedule.day_of_week,  # теперь просто число
+                'start_time': schedule.start_time,    # теперь просто число
+                'direction_id': schedule.direction_id,
+                'room_id': schedule.room_id,
+                'trainer_id': schedule.trainer_id,
+                'capacity': schedule.capacity,
+                'direction_name': schedule.direction.name if schedule.direction else None,
+                'trainer_name': schedule.trainer.user.name if schedule.trainer and schedule.trainer.user else None,
+                'available_spots': schedule.capacity
+            })
+        print("Returning schedules:", result)  # для отладки
         return jsonify(result)
     except Exception as e:
-        print(f"Общая ошибка при получении расписания: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        print("Error getting schedules:", str(e))
+        return jsonify({'error': str(e)}), 400
 
 # Создать новую запись в расписании
 @schedule_bp.route('/api/schedule', methods=['POST'])
 def create_schedule():
     try:
         data = request.get_json()
-        print("Полученные данные:", data)
+        print("Received data:", data)  # для отладки
         
-        # Преобразуем строку времени в объект time
-        time_str = data['start_time']
-        time_obj = datetime.strptime(time_str, '%H:%M').time()
-        
-        # Проверяем обязательные поля
-        required_fields = ['week_id', 'day_of_week', 'start_time', 
-                         'direction_id', 'trainer_id', 'room', 'capacity']
-        
-        missing_fields = [field for field in required_fields if field not in data]
-        if missing_fields:
-            return jsonify({
-                'error': f'Отсутствуют обязательные поля: {", ".join(missing_fields)}'
-            }), 400
-
-        schedule = Schedule(
+        new_schedule = Schedule(
             week_id=int(data['week_id']),
-            day_of_week=data['day_of_week'],
-            start_time=time_obj,
+            day_of_week=int(data['day_of_week']),  # 1-7
+            start_time=int(data['start_time']),    # просто число 8-21, без преобразования в time
             direction_id=int(data['direction_id']),
+            room_id=int(data['room_id']),
             trainer_id=int(data['trainer_id']),
-            room=data['room'],
             capacity=int(data['capacity'])
         )
         
-        db.session.add(schedule)
+        db.session.add(new_schedule)
         db.session.commit()
         
-        return jsonify(schedule.to_json()), 201
+        return jsonify(new_schedule.to_json()), 201
+        
     except Exception as e:
-        print("Ошибка:", str(e))
         db.session.rollback()
+        print(f"Error creating schedule: {str(e)}")
         return jsonify({'error': str(e)}), 400
 
 # Обновить запись в расписании
@@ -133,22 +110,14 @@ def update_schedule(schedule_id):
 @schedule_bp.route('/api/schedule/<int:schedule_id>', methods=['DELETE'])
 def delete_schedule(schedule_id):
     try:
-        schedule = Schedule.query.get(schedule_id)
-        if not schedule:
-            return jsonify({'error': 'Запись в расписании не найдена'}), 404
-
-        # Здесь можно добавить проверку на существование связанных записей клиентов
-        # когда мы добавим таблицу client_schedule
-
+        schedule = Schedule.query.get_or_404(schedule_id)
         db.session.delete(schedule)
         db.session.commit()
-        
-        return jsonify({
-            'message': 'Запись в расписании успешно удалена'
-        }), 200
+        return '', 204
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        print(f"Error deleting schedule: {str(e)}")
+        return jsonify({'error': str(e)}), 400
 
 # Получить все записи в расписании по дню недели
 @schedule_bp.route('/api/schedule/day/<day_of_week>', methods=['GET'])

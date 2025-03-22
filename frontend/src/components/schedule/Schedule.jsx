@@ -15,32 +15,42 @@ const Schedule = () => {
   const [selectedCell, setSelectedCell] = useState(null);
   
   const timeSlots = [
-    "8:00", "9:00", "10:00", "11:00", "12:00", 
-    "13:00", "14:00", "15:00", "16:00", "17:00", 
-    "18:00", "19:00", "20:00", "21:00"
+    { value: 8, label: '8:00' },
+    { value: 9, label: '9:00' },
+    { value: 10, label: '10:00' },
+    { value: 11, label: '11:00' },
+    { value: 12, label: '12:00' },
+    { value: 13, label: '13:00' },
+    { value: 14, label: '14:00' },
+    { value: 15, label: '15:00' },
+    { value: 16, label: '16:00' },
+    { value: 17, label: '17:00' },
+    { value: 18, label: '18:00' },
+    { value: 19, label: '19:00' },
+    { value: 20, label: '20:00' },
+    { value: 21, label: '21:00' }
   ];
   
-  const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-  const rooms = ['Зал 1', 'Зал 2'];
+  const days = [
+    { id: 1, name: 'Пн' },
+    { id: 2, name: 'Вт' },
+    { id: 3, name: 'Ср' },
+    { id: 4, name: 'Чт' },
+    { id: 5, name: 'Пт' },
+    { id: 6, name: 'Сб' },
+    { id: 7, name: 'Вс' }
+  ];
+
+  const rooms = [1, 2];
 
   const dayMapping = {
-    'Пн': 'MONDAY',
-    'Вт': 'TUESDAY',
-    'Ср': 'WEDNESDAY',
-    'Чт': 'THURSDAY',
-    'Пт': 'FRIDAY',
-    'Сб': 'SATURDAY',
-    'Вс': 'SUNDAY'
-  };
-
-  const dayMappingToEng = {
-    'Пн': 'MONDAY',
-    'Вт': 'TUESDAY',
-    'Ср': 'WEDNESDAY',
-    'Чт': 'THURSDAY',
-    'Пт': 'FRIDAY',
-    'Сб': 'SATURDAY',
-    'Вс': 'SUNDAY'
+    1: 'MONDAY',
+    2: 'TUESDAY',
+    3: 'WEDNESDAY',
+    4: 'THURSDAY',
+    5: 'FRIDAY',
+    6: 'SATURDAY',
+    7: 'SUNDAY'
   };
 
   useEffect(() => {
@@ -54,7 +64,6 @@ const Schedule = () => {
   }, [currentWeek]);
 
   useEffect(() => {
-    // Проверяем роль пользователя
     const user = JSON.parse(localStorage.getItem('currentUser'));
     setIsAdmin(user?.role === 'admin');
   }, []);
@@ -65,7 +74,6 @@ const Schedule = () => {
       const data = await response.json();
       setWeeksList(data);
       
-      // Находим ближайшую неделю к текущей дате
       const today = new Date();
       const nearestWeek = data.find(week => !week.is_template && 
         new Date(week.start_date) <= today && 
@@ -75,7 +83,6 @@ const Schedule = () => {
       if (nearestWeek) {
         setCurrentWeek(nearestWeek);
       } else {
-        // Если нет текущей недели, берем первую не шаблонную
         const firstRegularWeek = data.find(week => !week.is_template);
         setCurrentWeek(firstRegularWeek);
       }
@@ -98,44 +105,47 @@ const Schedule = () => {
         throw new Error('Failed to create new week');
       }
 
-      // Обновляем список недель
       fetchWeeks();
     } catch (error) {
       console.error('Error creating new week:', error);
+      alert('Ошибка при создании новой недели');
     }
   };
 
   const fetchScheduleData = async (weekId) => {
     try {
-      const response = await fetch(`/api/schedule/week/${weekId}`);
-      const data = await response.json();
-      console.log('Данные, полученные с сервера:', data);
-      setScheduleData(data);
+        const response = await fetch(`/api/schedule/week/${weekId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch schedule');
+        }
+        const data = await response.json();
+        console.log('Received schedule data:', data); // для отладки
+        setScheduleData(Array.isArray(data) ? data : []); // убедимся что это массив
     } catch (error) {
-      console.error('Error fetching schedule:', error);
+        console.error('Error fetching schedule:', error);
+        setScheduleData([]);
     }
   };
 
   const handleWeekChange = (direction) => {
-    const currentIndex = weeksList.findIndex(week => week.id === currentWeek.id);
     const regularWeeks = weeksList.filter(week => !week.is_template);
-    const currentRegularIndex = regularWeeks.findIndex(week => week.id === currentWeek.id);
+    const currentIndex = regularWeeks.findIndex(week => week.id === currentWeek.id);
 
     if (direction === 'next') {
-      if (currentRegularIndex < regularWeeks.length - 1) {
-        setCurrentWeek(regularWeeks[currentRegularIndex + 1]);
-      } else {
-        // Если следующей недели нет, предлагаем создать новую
-        const lastWeek = regularWeeks[regularWeeks.length - 1];
-        const nextWeekStart = new Date(lastWeek.end_date);
-        nextWeekStart.setDate(nextWeekStart.getDate() + 1);
-        
-        if (window.confirm('Создать следующую неделю?')) {
-          createNewWeek(nextWeekStart.toISOString().split('T')[0]);
+        if (currentIndex < regularWeeks.length - 1) {
+            setCurrentWeek(regularWeeks[currentIndex + 1]);
+        } else {
+            // Если следующей недели нет, создаем новую
+            const lastWeek = regularWeeks[regularWeeks.length - 1];
+            const nextWeekStart = new Date(lastWeek.end_date);
+            nextWeekStart.setDate(nextWeekStart.getDate() + 1);
+            
+            if (window.confirm('Создать следующую неделю?')) {
+                createNewWeek(nextWeekStart.toISOString().split('T')[0]);
+            }
         }
-      }
-    } else if (direction === 'prev' && currentRegularIndex > 0) {
-      setCurrentWeek(regularWeeks[currentRegularIndex - 1]);
+    } else if (direction === 'prev' && currentIndex > 0) {
+        setCurrentWeek(regularWeeks[currentIndex - 1]);
     }
   };
 
@@ -143,17 +153,17 @@ const Schedule = () => {
     switch (timeFilter) {
       case 'morning':
         return timeSlots.filter(time => {
-          const hour = parseInt(time.split(':')[0]);
+          const hour = parseInt(time.label.split(':')[0]);
           return hour >= 8 && hour < 12;
         });
       case 'day':
         return timeSlots.filter(time => {
-          const hour = parseInt(time.split(':')[0]);
+          const hour = parseInt(time.label.split(':')[0]);
           return hour >= 12 && hour < 17;
         });
       case 'evening':
         return timeSlots.filter(time => {
-          const hour = parseInt(time.split(':')[0]);
+          const hour = parseInt(time.label.split(':')[0]);
           return hour >= 17;
         });
       default:
@@ -168,77 +178,59 @@ const Schedule = () => {
     return `${start.toLocaleDateString('ru-RU')} - ${end.toLocaleDateString('ru-RU')}`;
   };
 
-  const handleCellClick = (time, day, room) => {
+  const handleCellClick = (time, dayId, roomId) => {
     if (!isAdmin) return;
     
     setSelectedCell({
       time,
-      day: dayMapping[day],
-      room,
+      day_of_week: dayId,
+      room_id: roomId,
       week_id: currentWeek.id
     });
     setShowLessonModal(true);
   };
 
-  const renderScheduleCell = (time, day, room) => {
-    // Добавим отладочную информацию для входных данных
-    console.log('Данные с сервера:', scheduleData);
-    console.log('Параметры ячейки до преобразования:', { time, day, room });
-
-    // Преобразуем день недели в английский формат
-    const englishDay = dayMappingToEng[day];
-    
-    console.log('День недели после преобразования:', englishDay);
-
-    const scheduleItems = scheduleData.filter(item => {
-      // Проверяем каждое условие отдельно для отладки
-      const timeMatch = item.start_time === time;
-      const dayMatch = item.day_of_week === englishDay;
-      const roomMatch = item.room === room;
-
-      console.log('Детали сравнения:', {
-        'Запись из БД': {
-          time: item.start_time,
-          day: item.day_of_week,
-          room: item.room
-        },
-        'Параметры ячейки': {
-          time: time,
-          day: englishDay,
-          room: room
-        },
-        'Результаты сравнения': {
-          timeMatch,
-          dayMatch,
-          roomMatch
-        }
-      });
-
-      return timeMatch && dayMatch && roomMatch;
-    });
+  const renderScheduleCell = (timeSlot, day, roomId) => {
+    const scheduleItems = scheduleData.filter(item => 
+        item.start_time === timeSlot.value && 
+        item.day_of_week === day.id && 
+        item.room_id === roomId
+    );
 
     if (scheduleItems.length > 0) {
-      return (
-        <div className="schedule-cell-content">
-          {scheduleItems.map((item, index) => (
-            <div key={item.id} className="training-item">
-              <div className="training-name">{item.direction_name}</div>
-              <div className="trainer-name">{item.trainer_name}</div>
-              <div className="capacity">Мест: {item.capacity}</div>
-              {index < scheduleItems.length - 1 && <div className="divider"></div>}
+        return (
+            <div className="schedule-cell-content">
+                {scheduleItems.map((item, index) => (
+                    <div key={item.id} className="training-item">
+                        {isAdmin && (
+                            <button 
+                                className="delete-button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteTraining(item.id);
+                                }}
+                            >
+                                ✕
+                            </button>
+                        )}
+                        <div className="training-name">{item.direction_name}</div>
+                        <div className="trainer-name">{item.trainer_name}</div>
+                        <div className="capacity">
+                            Мест: {item.available_spots}/{item.capacity}
+                        </div>
+                    </div>
+                ))}
             </div>
-          ))}
-        </div>
-      );
+        );
     }
 
     return (
-      <div 
-        className="schedule-cell-empty"
-        onClick={() => handleCellClick(time, day, room)}
-      >
-        {isAdmin ? '+' : ''}
-      </div>
+        <div 
+            className={`schedule-cell-empty ${isAdmin ? 'clickable' : ''}`}
+            onClick={isAdmin ? () => handleCellClick(timeSlot.value, day.id, roomId) : undefined}
+        >
+            {isAdmin && <span className="add-button">+</span>}
+        </div>
     );
   };
 
@@ -256,12 +248,31 @@ const Schedule = () => {
         throw new Error('Failed to create week');
       }
 
-      // Обновляем список недель
       fetchWeeks();
       setShowCreateWeekModal(false);
     } catch (error) {
       console.error('Error creating week:', error);
       alert('Ошибка при создании недели');
+    }
+  };
+
+  const handleDeleteTraining = async (scheduleId) => {
+    if (window.confirm('Вы уверены, что хотите удалить эту тренировку?')) {
+        try {
+            const response = await fetch(`/api/schedule/${scheduleId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete training');
+            }
+
+            // Обновляем данные расписания после удаления
+            fetchScheduleData(currentWeek.id);
+        } catch (error) {
+            console.error('Error deleting training:', error);
+            alert('Ошибка при удалении тренировки');
+        }
     }
   };
 
@@ -326,19 +337,19 @@ const Schedule = () => {
         <div className="schedule__header">
           <div className="time-column">Время</div>
           {days.map(day => (
-            <div key={day} className="day-column">{day}</div>
+            <div key={day.id} className="day-column">{day.name}</div>
           ))}
         </div>
         
         <div className="schedule__body">
-          {getFilteredTimeSlots().map(time => (
-            <div key={time} className="time-row">
-              <div className="time-cell">{time}</div>
+          {getFilteredTimeSlots().map(timeSlot => (
+            <div key={timeSlot.value} className="time-row">
+              <div className="time-cell">{timeSlot.label}</div>
               {days.map(day => (
-                <div key={`${day}-${time}`} className="day-cell">
-                  {rooms.map(room => (
-                    <div key={`${day}-${time}-${room}`} className="room-cell">
-                      {renderScheduleCell(time, day, room)}
+                <div key={`${day.id}-${timeSlot.value}`} className="day-cell">
+                  {rooms.map(roomId => (
+                    <div key={`${day.id}-${timeSlot.value}-${roomId}`} className="room-cell">
+                      {renderScheduleCell(timeSlot, day, roomId)}
                     </div>
                   ))}
                 </div>
@@ -364,7 +375,6 @@ const Schedule = () => {
           }}
           onSave={async (lessonData) => {
             try {
-              console.log('Отправляемые данные:', lessonData);
               const response = await fetch('/api/schedule', {
                 method: 'POST',
                 headers: {
@@ -375,11 +385,9 @@ const Schedule = () => {
 
               if (!response.ok) {
                 const errorData = await response.json();
-                console.error('Ошибка от сервера:', errorData);
                 throw new Error(errorData.error || 'Failed to create lesson');
               }
 
-              // Обновляем данные расписания
               fetchScheduleData(currentWeek.id);
               setShowLessonModal(false);
               setSelectedCell(null);

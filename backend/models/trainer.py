@@ -21,7 +21,8 @@ class Trainer(db.Model):
             'id': self.id,
             'description': self.description,
             'photo': self.photo,
-            'user_id': self.user_id
+            'user_id': self.user_id,
+            'name': self.user.name if self.user else None
         }
   
 

@@ -33,6 +33,7 @@ def create_app():
     from .routes.purchased_subscription_routes import purchased_subscriptions
     from .routes.week_routes import week_bp
     from .routes.schedule_routes import schedule_bp
+    from .routes.room_routes import rooms_bp
     
     app.register_blueprint(user_bp)
     app.register_blueprint(auth_bp)
@@ -43,6 +44,7 @@ def create_app():
     app.register_blueprint(purchased_subscriptions)
     app.register_blueprint(week_bp)
     app.register_blueprint(schedule_bp)
+    app.register_blueprint(rooms_bp)
     
     with app.app_context():
         db.create_all()  # Теперь создадутся все таблицы

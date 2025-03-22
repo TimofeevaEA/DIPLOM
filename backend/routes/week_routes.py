@@ -122,34 +122,9 @@ def delete_week(week_id):
 @week_bp.route('/api/weeks/copy-template', methods=['POST'])
 def copy_template_week():
     try:
-        data = request.json
-        
-        if 'start_date' not in data:
-            return jsonify({
-                'error': 'Дата начала новой недели обязательна'
-            }), 400
-
-        # Находим эталонную неделю
-        template_week = Week.query.filter_by(is_template=True).first()
-        if not template_week:
-            return jsonify({
-                'error': 'Шаблон недели не найден'
-            }), 404
-
+        data = request.get_json()
         start_date = datetime.strptime(data['start_date'], '%Y-%m-%d').date()
         end_date = start_date + timedelta(days=6)
-
-        # Проверяем, нет ли пересечения с существующими неделями
-        overlapping_week = Week.query.filter(
-            Week.start_date <= end_date,
-            Week.end_date >= start_date,
-            Week.is_template == False
-        ).first()
-        
-        if overlapping_week:
-            return jsonify({
-                'error': 'Указанный период пересекается с существующей неделей'
-            }), 400
 
         # Создаем новую неделю
         new_week = Week(
@@ -158,30 +133,28 @@ def copy_template_week():
             is_template=False
         )
         db.session.add(new_week)
-        db.session.flush()  # Получаем id новой недели
-
-        # Получаем все записи расписания эталонной недели
-        template_schedules = Schedule.query.filter_by(week_id=template_week.id).all()
-
-        # Копируем каждую запись расписания
-        for template_schedule in template_schedules:
-            new_schedule = Schedule(
-                week_id=new_week.id,  # Только это поле меняется
-                day_of_week=template_schedule.day_of_week,
-                start_time=template_schedule.start_time,
-                direction_id=template_schedule.direction_id,
-                room=template_schedule.room,
-                trainer_id=template_schedule.trainer_id,
-                capacity=template_schedule.capacity
-            )
-            db.session.add(new_schedule)
-
         db.session.commit()
-        
-        return jsonify({
-            'message': 'Неделя успешно скопирована из шаблона',
-            'week': new_week.to_json()
-        }), 201
+
+        # Находим шаблонную неделю и копируем из нее расписание
+        template_week = Week.query.filter_by(is_template=True).first()
+        if template_week:
+            template_schedules = Schedule.query.filter_by(week_id=template_week.id).all()
+            for schedule in template_schedules:
+                new_schedule = Schedule(
+                    week_id=new_week.id,
+                    day_of_week=schedule.day_of_week,
+                    start_time=schedule.start_time,
+                    direction_id=schedule.direction_id,
+                    room_id=schedule.room_id,
+                    trainer_id=schedule.trainer_id,
+                    capacity=schedule.capacity
+                )
+                db.session.add(new_schedule)
+            db.session.commit()
+
+        return jsonify(new_week.to_json()), 201
+
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500 
+        print(f"Error copying template week: {str(e)}")
+        return jsonify({'error': str(e)}), 400 
