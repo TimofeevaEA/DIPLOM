@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './Schedule.css';
 import CreateWeekModal from './CreateWeekModal';
 import CreateLessonModal from './CreateLessonModal';
+import TrainingClients from './TrainingClients';
+import CompletedTrainingClients from './CompletedTrainingClients';
 
 const Schedule = () => {
   const [scheduleData, setScheduleData] = useState([]);
@@ -13,6 +15,7 @@ const Schedule = () => {
   const [showCreateWeekModal, setShowCreateWeekModal] = useState(false);
   const [showLessonModal, setShowLessonModal] = useState(false);
   const [selectedCell, setSelectedCell] = useState(null);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
   
   const timeSlots = [
     { value: 8, label: '8:00' },
@@ -114,13 +117,19 @@ const Schedule = () => {
 
   const fetchScheduleData = async (weekId) => {
     try {
-        const response = await fetch(`/api/schedule/week/${weekId}`);
+        const response = await fetch(`/api/schedule/week/${weekId}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
         if (!response.ok) {
             throw new Error('Failed to fetch schedule');
         }
         const data = await response.json();
-        console.log('Received schedule data:', data); // для отладки
-        setScheduleData(Array.isArray(data) ? data : []); // убедимся что это массив
+        console.log('Received schedule data:', data);
+        setScheduleData(Array.isArray(data) ? data : []);
     } catch (error) {
         console.error('Error fetching schedule:', error);
         setScheduleData([]);
@@ -178,16 +187,43 @@ const Schedule = () => {
     return `${start.toLocaleDateString('ru-RU')} - ${end.toLocaleDateString('ru-RU')}`;
   };
 
-  const handleCellClick = (time, dayId, roomId) => {
-    if (!isAdmin) return;
-    
-    setSelectedCell({
-      time,
-      day_of_week: dayId,
-      room_id: roomId,
-      week_id: currentWeek.id
-    });
-    setShowLessonModal(true);
+  const handleCellClick = (schedule) => {
+    if (schedule) {
+        setSelectedSchedule(schedule);
+    } else if (isAdmin) {
+        setSelectedCell({
+            weekId: currentWeek.id,
+            dayId: selectedCell.dayId,
+            timeSlot: selectedCell.timeSlot,
+            roomId: selectedCell.roomId
+        });
+        setShowLessonModal(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setSelectedSchedule(null);
+    if (currentWeek?.id) {
+        fetchScheduleData(currentWeek.id);
+    }
+  };
+
+  const handleEmptyCellClick = (timeSlot, day, roomId) => {
+    if (isAdmin) {
+        const newCell = {
+            weekId: currentWeek.id,
+            dayId: day.id,
+            timeSlot: timeSlot.value,
+            roomId: roomId
+        };
+        console.debug('Creating training:', {
+            day: ['', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'][day.id],
+            time: `${timeSlot.value}:00`,
+            room: roomId
+        });
+        setSelectedCell(newCell);
+        setShowLessonModal(true);
+    }
   };
 
   const renderScheduleCell = (timeSlot, day, roomId) => {
@@ -198,28 +234,19 @@ const Schedule = () => {
     );
 
     if (scheduleItems.length > 0) {
+        const item = scheduleItems[0];
         return (
-            <div className="schedule-cell-content">
-                {scheduleItems.map((item, index) => (
-                    <div key={item.id} className="training-item">
-                        {isAdmin && (
-                            <button 
-                                className="delete-button"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteTraining(item.id);
-                                }}
-                            >
-                                ✕
-                            </button>
-                        )}
-                        <div className="training-name">{item.direction_name}</div>
-                        <div className="trainer-name">{item.trainer_name}</div>
-                        <div className="capacity">
-                            Мест: {item.available_spots}/{item.capacity}
-                        </div>
+            <div 
+                className="schedule-cell-content"
+                onClick={() => setSelectedSchedule(item)}
+            >
+                <div className={`training-item ${item.is_completed ? 'completed' : ''}`}>
+                    <div className="training-name">{item.direction_name}</div>
+                    <div className="trainer-name">{item.trainer_name}</div>
+                    <div className="capacity">
+                        Мест: {item.spots_left || 0}/{item.capacity}
                     </div>
-                ))}
+                </div>
             </div>
         );
     }
@@ -227,7 +254,7 @@ const Schedule = () => {
     return (
         <div 
             className={`schedule-cell-empty ${isAdmin ? 'clickable' : ''}`}
-            onClick={isAdmin ? () => handleCellClick(timeSlot.value, day.id, roomId) : undefined}
+            onClick={() => handleEmptyCellClick(timeSlot, day, roomId)}
         >
             {isAdmin && <span className="add-button">+</span>}
         </div>
@@ -368,6 +395,7 @@ const Schedule = () => {
 
       {showLessonModal && selectedCell && (
         <CreateLessonModal
+          key={`modal-${selectedCell.dayId}-${selectedCell.timeSlot}-${selectedCell.roomId}`}
           cellData={selectedCell}
           onClose={() => {
             setShowLessonModal(false);
@@ -375,12 +403,21 @@ const Schedule = () => {
           }}
           onSave={async (lessonData) => {
             try {
+              const completeData = {
+                ...lessonData,
+                week_id: selectedCell.weekId,
+                day_of_week: selectedCell.dayId,
+                start_time: selectedCell.timeSlot,
+                room_id: selectedCell.roomId,
+                spots_left: lessonData.capacity
+              };
+
               const response = await fetch('/api/schedule', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(lessonData)
+                body: JSON.stringify(completeData)
               });
 
               if (!response.ok) {
@@ -388,15 +425,31 @@ const Schedule = () => {
                 throw new Error(errorData.error || 'Failed to create lesson');
               }
 
-              fetchScheduleData(currentWeek.id);
+              await fetchScheduleData(currentWeek.id);
               setShowLessonModal(false);
               setSelectedCell(null);
             } catch (error) {
               console.error('Error creating lesson:', error);
-              alert('Ошибка при создании тренировки');
+              alert('Ошибка при создании тренировки: ' + error.message);
             }
           }}
         />
+      )}
+
+      {selectedSchedule && (
+        selectedSchedule.is_completed ? (
+            <CompletedTrainingClients
+                scheduleId={selectedSchedule.id}
+                onClose={handleCloseModal}
+            />
+        ) : (
+            <TrainingClients
+                scheduleId={selectedSchedule.id}
+                onClose={handleCloseModal}
+                onScheduleUpdate={() => fetchScheduleData(currentWeek.id)}
+                weekId={currentWeek?.id}
+            />
+        )
       )}
     </div>
   );

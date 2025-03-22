@@ -13,18 +13,17 @@ class ClientSchedule(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     schedule_id = db.Column(db.Integer, db.ForeignKey('schedule.id'), nullable=False)
-    status = db.Column(db.Enum(WorkoutStatus), default=WorkoutStatus.BOOKED)
-    created_at = db.Column(db.DateTime, default=db.func.now())
+    status = db.Column(db.String(50), default='Записан')
     
-    # Связи
-    schedule = db.relationship('Schedule', backref='client_bookings')
-    client = db.relationship('User', backref='schedule_bookings')
+    client = db.relationship('User')
+    schedule = db.relationship('Schedule')
 
     def to_json(self):
         return {
             'id': self.id,
             'client_id': self.client_id,
             'schedule_id': self.schedule_id,
-            'status': self.status.value,
-            'created_at': str(self.created_at)
+            'status': self.status,
+            'client_name': self.client.name if self.client else None,
+            'phone': self.client.phone if self.client else None
         }

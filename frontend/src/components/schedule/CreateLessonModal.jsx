@@ -1,23 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import './CreateLessonModal.css';
 
-const CreateLessonModal = ({ cellData, onClose, onSave }) => {
+const CreateLessonModal = React.memo(({ cellData, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     direction_id: '',
     trainer_id: '',
     capacity: 10,
-    week_id: cellData.week_id,
-    day_of_week: cellData.day_of_week,
-    start_time: cellData.time,
-    room_id: cellData.room_id
   });
 
-  const [directions, setDirections] = useState([]);
   const [trainers, setTrainers] = useState([]);
+  const [directions, setDirections] = useState([]);
+
+  // Добавляем отображение информации о выбранной ячейке
+  const timeSlots = {
+    8: '8:00', 9: '9:00', 10: '10:00', 11: '11:00',
+    12: '12:00', 13: '13:00', 14: '14:00', 15: '15:00',
+    16: '16:00', 17: '17:00', 18: '18:00', 19: '19:00',
+    20: '20:00', 21: '21:00'
+  };
+
+  const days = {
+    1: 'Понедельник',
+    2: 'Вторник',
+    3: 'Среда',
+    4: 'Четверг',
+    5: 'Пятница',
+    6: 'Суббота',
+    7: 'Воскресенье'
+  };
 
   useEffect(() => {
-    fetchDirections();
     fetchTrainers();
+    fetchDirections();
   }, []);
 
   const fetchDirections = async () => {
@@ -44,45 +58,32 @@ const CreateLessonModal = ({ cellData, onClose, onSave }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Преобразуем данные в правильный формат перед отправкой
-    const dataToSend = {
-        direction_id: parseInt(formData.direction_id),
-        trainer_id: parseInt(formData.trainer_id),
-        capacity: parseInt(formData.capacity),
-        week_id: parseInt(formData.week_id),
-        day_of_week: parseInt(formData.day_of_week),
-        start_time: formData.start_time,
-        room_id: parseInt(formData.room_id)
-    };
-
-    console.log('Sending data:', dataToSend); // для отладки
-    onSave(dataToSend);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'capacity' ? parseInt(value) : value
-    }));
+    console.debug('Submitting training:', {
+      ...formData,
+      day: ['', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'][cellData.dayId],
+      time: `${cellData.timeSlot}:00`,
+      room: cellData.roomId
+    });
+    onSave(formData);
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h2>Создать тренировку</h2>
-          <button className="close-button" onClick={onClose}>&times;</button>
-        </div>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <h2>Создать тренировку</h2>
         
+        <div className="cell-info">
+          <p>Время: {timeSlots[cellData.timeSlot]}</p>
+          <p>День недели: {days[cellData.dayId]}</p>
+          <p>Зал: {cellData.roomId}</p>
+        </div>
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Направление:</label>
             <select 
-              name="direction_id" 
-              value={formData.direction_id}
-              onChange={handleChange}
+              value={formData.direction_id} 
+              onChange={(e) => setFormData({...formData, direction_id: e.target.value})}
               required
             >
               <option value="">Выберите направление</option>
@@ -97,9 +98,8 @@ const CreateLessonModal = ({ cellData, onClose, onSave }) => {
           <div className="form-group">
             <label>Тренер:</label>
             <select 
-              name="trainer_id" 
-              value={formData.trainer_id}
-              onChange={handleChange}
+              value={formData.trainer_id} 
+              onChange={(e) => setFormData({...formData, trainer_id: e.target.value})}
               required
             >
               <option value="">Выберите тренера</option>
@@ -113,25 +113,17 @@ const CreateLessonModal = ({ cellData, onClose, onSave }) => {
 
           <div className="form-group">
             <label>Количество мест:</label>
-            <input
-              type="number"
-              name="capacity"
+            <input 
+              type="number" 
               value={formData.capacity}
-              onChange={handleChange}
+              onChange={(e) => setFormData({...formData, capacity: parseInt(e.target.value)})}
               min="1"
-              max="50"
               required
             />
           </div>
 
-          <div className="form-info">
-            <p>Время: {formData.start_time}</p>
-            <p>День недели: {formData.day_of_week}</p>
-            <p>Зал: {formData.room_id}</p>
-          </div>
-
-          <div className="modal-footer">
-            <button type="button" className="cancel-btn" onClick={onClose}>
+          <div className="modal-buttons">
+            <button type="button" onClick={onClose} className="cancel-btn">
               Отмена
             </button>
             <button type="submit" className="save-btn">
@@ -142,6 +134,6 @@ const CreateLessonModal = ({ cellData, onClose, onSave }) => {
       </div>
     </div>
   );
-};
+});
 
 export default CreateLessonModal; 

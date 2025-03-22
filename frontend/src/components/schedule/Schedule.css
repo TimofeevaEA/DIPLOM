@@ -118,11 +118,28 @@
 }
 
 .training-item {
-  position: relative;
-  padding: 10px;
-  background: #fce4ec;
+  background-color: #fff1f4;
+  border-radius: 4px;
+  padding: 8px;
   height: 100%;
-  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.training-item.completed {
+  background-color: #e6ffe6;  /* светло-зеленый */
+  border: 1px solid #b3ffb3;  /* более темный зеленый для границы */
+}
+
+.training-item.completed .training-name,
+.training-item.completed .trainer-name {
+  color: #006600;  /* темно-зеленый для текста */
+}
+
+.training-item.completed .capacity {
+  color: #008000;  /* зеленый для информации о местах */
 }
 
 .training-name {
@@ -223,4 +240,43 @@
   .time-filters {
       flex-wrap: wrap;
   }
+}
+
+.schedule-cell {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.schedule-cell:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.schedule-cell.has-schedule {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+.training-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.spots-info {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 4px;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }

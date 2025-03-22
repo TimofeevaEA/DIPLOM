@@ -42,22 +42,30 @@ class Schedule(db.Model):
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=False)
     trainer_id = db.Column(db.Integer, db.ForeignKey('trainers.id'), nullable=False)
     capacity = db.Column(db.Integer, nullable=False)
+    spots_left = db.Column(db.Integer)  # Оставшиеся места
+    is_completed = db.Column(db.Boolean, default=False)  # Статус тренировки
 
     direction = db.relationship('Directions')
     trainer = db.relationship('Trainer')
     room = db.relationship('Room')
 
+    def __init__(self, *args, **kwargs):
+        super(Schedule, self).__init__(*args, **kwargs)
+        if self.capacity is not None:
+            self.spots_left = self.capacity  # При создании spots_left равен capacity
+
     def to_json(self):
         return {
             'id': self.id,
             'week_id': self.week_id,
-            'day_of_week': self.day_of_week,  # просто число
-            'start_time': self.start_time,    # просто число
+            'day_of_week': self.day_of_week,
+            'start_time': self.start_time,
             'direction_id': self.direction_id,
             'room_id': self.room_id,
             'trainer_id': self.trainer_id,
             'capacity': self.capacity,
+            'spots_left': self.spots_left,
+            'is_completed': self.is_completed,
             'direction_name': self.direction.name if self.direction else None,
-            'trainer_name': self.trainer.user.name if self.trainer and self.trainer.user else None,
-            'available_spots': self.capacity
+            'trainer_name': self.trainer.user.name if self.trainer and self.trainer.user else None
         }

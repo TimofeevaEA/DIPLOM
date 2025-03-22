@@ -120,4 +120,16 @@
 
 .lesson-modal {
     animation: modalFadeIn 0.3s ease-out;
+}
+
+.cell-info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.cell-info p {
+    margin: 5px 0;
+    color: #666;
 } 
