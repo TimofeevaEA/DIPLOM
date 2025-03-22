@@ -66,7 +66,7 @@ const TrainingClients = ({ scheduleId, onClose, onScheduleUpdate }) => {
 
     const handleBookClient = async (clientId) => {
         try {
-            const response = await fetch(`/api/schedule/${scheduleId}/book`, {
+            const response = await fetch(`http://localhost:5000/api/schedule/${scheduleId}/book`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -157,36 +157,37 @@ const TrainingClients = ({ scheduleId, onClose, onScheduleUpdate }) => {
                     <button className="close-button" onClick={onClose}>×</button>
                 </div>
 
-                <div className="booked-clients">
-                    {bookedClients.map(client => (
-                        <div key={client.id} className="client-item">
-                            <div className="client-info">
-                                {!isCompleted ? (
-                                    <input
-                                        type="checkbox"
-                                        checked={attendanceMap[client.id] || false}
-                                        onChange={() => handleAttendanceChange(client.id)}
-                                    />
-                                ) : (
-                                    <span className={`status-indicator ${client.status.toLowerCase()}`}>
-                                        {client.status === 'Посетил' ? '✓' : '✕'}
-                                    </span>
-                                )}
-                                <span className="client-name">
-                                    {client.client_name} {client.phone && `(${client.phone})`}
+                {bookedClients.map(client => (
+                    <div key={client.id} className="client-item">
+                        <div className="client-info">
+                            {!isCompleted ? (
+                                <input
+                                    type="checkbox"
+                                    checked={attendanceMap[client.id] || false}
+                                    onChange={() => handleAttendanceChange(client.id)}
+                                />
+                            ) : (
+                                <span className={`status-indicator ${client.status.toLowerCase()}`}>
+                                    {client.status === 'Посетил' ? '✓' : '✕'}
                                 </span>
-                            </div>
-                            {!isCompleted && (
-                                <button 
-                                    className="delete-client-button"
-                                    onClick={() => handleDeleteClient(client.id)}
-                                >
-                                    ×
-                                </button>
                             )}
+                            <span className="client-name">
+                                {client.client_name} {client.phone && `(${client.phone})`}
+                            </span>
+                            <span className="remaining-sessions">
+                                Осталось: {client.remaining_sessions || 0}
+                            </span>
                         </div>
-                    ))}
-                </div>
+                        {!isCompleted && (
+                            <button 
+                                className="delete-client-button"
+                                onClick={() => handleDeleteClient(client.id)}
+                            >
+                                ×
+                            </button>
+                        )}
+                    </div>
+                ))}
 
                 {!isCompleted && (
                     <>
@@ -233,4 +234,4 @@ const TrainingClients = ({ scheduleId, onClose, onScheduleUpdate }) => {
     );
 };
 
-export default TrainingClients; 
+export default TrainingClients;

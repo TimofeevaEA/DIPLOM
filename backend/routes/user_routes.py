@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 from ..models.user import User  # Используем относительный импорт
 from .. import db  # Импортируем db из корневого __init__.py
+from ..models.purchased_subscription import PurchasedSubscription  # Импортируем модель PurchasedSubscription
 
 # Создаем Blueprint
 user_bp = Blueprint('user', __name__)
@@ -109,4 +110,31 @@ def update_user(user_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+@user_bp.route('/api/users/search')
+def search_users():
+    query = request.args.get('query', '')
+    with_subscriptions = request.args.get('with_subscriptions', 'false') == 'true'
+
+    users = User.query.filter(
+        (User.role == 'user') &
+        (User.name.ilike(f'%{query}%') | User.phone.ilike(f'%{query}%'))
+    ).all()
+
+    if with_subscriptions:
+        result = []
+        for user in users:
+            user_data = user.to_json()
+            # Получаем активную подписку
+            active_subscription = PurchasedSubscription.query.filter_by(
+                client_id=user.id
+            ).filter(
+                PurchasedSubscription.remaining_sessions > 0
+            ).first()
+            
+            user_data['active_subscription'] = active_subscription.to_json() if active_subscription else None
+            result.append(user_data)
+        return jsonify(result)
+    
+    return jsonify([user.to_json() for user in users])
 

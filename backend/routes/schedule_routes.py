@@ -3,6 +3,7 @@ from ..models.week_schedule import Schedule, DayOfWeek
 from ..models.directions import Directions
 from ..models.trainer import Trainer
 from ..models.client_schedule import ClientSchedule
+from ..models.purchased_subscription import PurchasedSubscription
 from .. import db
 from datetime import datetime, time
 
@@ -126,10 +127,17 @@ def get_schedule_by_day(day_of_week):
 def book_client(schedule_id):
     try:
         data = request.get_json()
-        client_id = data.get('clientId')  # изменили с client_id на clientId
+        client_id = data.get('clientId')
 
-        if not client_id:
-            return jsonify({'error': 'Client ID is required'}), 400
+        # Проверяем наличие активной подписки с оставшимися тренировками
+        active_subscription = PurchasedSubscription.query.filter_by(
+            client_id=client_id
+        ).filter(
+            PurchasedSubscription.remaining_sessions > 0
+        ).first()
+
+        if not active_subscription:
+            return jsonify({'error': 'У клиента нет активной подписки с доступными тренировками'}), 400
 
         schedule = Schedule.query.get_or_404(schedule_id)
         
@@ -145,14 +153,14 @@ def book_client(schedule_id):
         if existing_booking:
             return jsonify({'error': 'Клиент уже записан'}), 400
 
-        # Создаем новую запись
+        # Создаем запись с указанием подписки
         booking = ClientSchedule(
             client_id=client_id,
             schedule_id=schedule_id,
+            purchased_subscription_id=active_subscription.id,
             status='Записан'
         )
         
-        # Уменьшаем количество свободных мест
         schedule.spots_left -= 1
 
         db.session.add(booking)
@@ -160,7 +168,7 @@ def book_client(schedule_id):
 
         return jsonify({
             'message': 'Успешно записан',
-            'spots_left': schedule.spots_left
+            'remaining_sessions': active_subscription.remaining_sessions
         }), 200
 
     except Exception as e:
@@ -217,8 +225,19 @@ def update_client_status(booking_id):
         booking = ClientSchedule.query.get_or_404(booking_id)
         booking.status = new_status
         
+        # Если статус "Посетил", уменьшаем количество тренировок
+        if new_status == 'Посетил':
+            subscription = booking.purchased_subscription
+            if subscription.remaining_sessions > 0:
+                subscription.remaining_sessions -= 1
+            else:
+                return jsonify({'error': 'У клиента закончились тренировки'}), 400
+        
         db.session.commit()
-        return jsonify({'message': 'Статус обновлен'}), 200
+        return jsonify({
+            'message': 'Статус обновлен',
+            'remaining_sessions': booking.purchased_subscription.remaining_sessions
+        }), 200
 
     except Exception as e:
         db.session.rollback()
@@ -229,16 +248,24 @@ def update_client_status(booking_id):
 def get_training_clients(schedule_id):
     try:
         bookings = ClientSchedule.query.filter_by(schedule_id=schedule_id).all()
-        clients_data = [{
-            'id': booking.id,
-            'client_name': booking.client.name,
-            'status': booking.status,
-            'phone': booking.client.phone
-        } for booking in bookings]
+        clients_data = []
         
+        for booking in bookings:
+            client_data = {
+                'id': booking.id,
+                'client_id': booking.client_id,
+                'client_name': booking.client.name if booking.client else None,
+                'phone': booking.client.phone if booking.client else None,
+                'status': booking.status,
+                'remaining_sessions': booking.purchased_subscription.remaining_sessions  # Добавляем это поле
+            }
+            clients_data.append(client_data)
+        
+        print("Sending clients data:", clients_data)  # для отладки
         return jsonify(clients_data), 200
 
     except Exception as e:
+        print(f"Error getting clients: {str(e)}")  # для отладки
         return jsonify({'error': str(e)}), 500
 
 @schedule_bp.route('/api/schedule/<int:schedule_id>', methods=['GET'])
