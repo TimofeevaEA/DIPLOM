@@ -11,6 +11,8 @@ import { useState, useEffect } from "react";
 import Subscriptions from "./components/subscriptions/Subscriptions";
 import AdminPurchaseSubscription from "./components/subscriptions/AdminPurchaseSubscription";
 import Schedule from "./components/schedule/Schedule";
+import ClientSchedule from "./components/client/schedule/ClientSchedule";
+
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -46,6 +48,7 @@ function App() {
       <Header />
       <Promo />
       <Directions />
+      <ClientSchedule />
       <Footer />
     </>
   );

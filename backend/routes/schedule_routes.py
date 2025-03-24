@@ -129,7 +129,16 @@ def book_client(schedule_id):
         data = request.get_json()
         client_id = data.get('clientId')
 
-        # Проверяем наличие активной подписки с оставшимися тренировками
+        # Проверяем, не записан ли уже клиент
+        existing_booking = ClientSchedule.query.filter_by(
+            client_id=client_id,
+            schedule_id=schedule_id
+        ).first()
+
+        if existing_booking:
+            return jsonify({'error': 'Вы уже записаны на эту тренировку'}), 400
+
+        # Проверяем наличие активной подписки
         active_subscription = PurchasedSubscription.query.filter_by(
             client_id=client_id
         ).filter(
@@ -144,16 +153,7 @@ def book_client(schedule_id):
         if schedule.spots_left <= 0:
             return jsonify({'error': 'Нет свободных мест'}), 400
 
-        # Проверяем, не записан ли уже клиент
-        existing_booking = ClientSchedule.query.filter_by(
-            client_id=client_id,
-            schedule_id=schedule_id
-        ).first()
-
-        if existing_booking:
-            return jsonify({'error': 'Клиент уже записан'}), 400
-
-        # Создаем запись с указанием подписки
+        # Создаем запись
         booking = ClientSchedule(
             client_id=client_id,
             schedule_id=schedule_id,
@@ -162,7 +162,7 @@ def book_client(schedule_id):
         )
         
         schedule.spots_left -= 1
-
+        
         db.session.add(booking)
         db.session.commit()
 
@@ -173,7 +173,7 @@ def book_client(schedule_id):
 
     except Exception as e:
         db.session.rollback()
-        print(f"Error booking client: {str(e)}")  # для отладки
+        print(f"Error booking client: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 # Отмена записи клиента

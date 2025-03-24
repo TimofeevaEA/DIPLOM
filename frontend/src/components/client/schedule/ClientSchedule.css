@@ -1,0 +1,185 @@
+.client-schedule {
+    padding: 20px;
+}
+
+.content__header {
+    margin-bottom: 20px;
+}
+
+.week-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.week-navigation {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.week-navigation__btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: #f0f0f0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.week-navigation__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.time-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.time-filter__btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background: #f0f0f0;
+    cursor: pointer;
+}
+
+.time-filter__btn.active {
+    background: #2196f3;
+    color: white;
+}
+
+.schedule {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.schedule__header {
+    display: grid;
+    grid-template-columns: 80px repeat(7, 1fr);
+    background: #f8f9fa;
+}
+
+.time-column, .day-column {
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.schedule__body {
+    background: white;
+}
+
+.time-row {
+    display: grid;
+    grid-template-columns: 80px repeat(7, 1fr);
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.time-cell {
+    padding: 15px;
+    text-align: center;
+    background: #f8f9fa;
+    border-right: 1px solid #e0e0e0;
+}
+
+.day-cell {
+    padding: 10px;
+    border-right: 1px solid #e0e0e0;
+    min-height: 100px;
+}
+
+.schedule-cell-content {
+    height: 100%;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.schedule-cell-content.booked {
+    background: #e3f2fd;
+    border: 1px solid #90caf9;
+}
+
+.training-item {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.training-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.trainer-name {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.capacity {
+    color: #888;
+    font-size: 0.8em;
+    margin-top: auto;
+}
+
+.book-button {
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.book-button:hover {
+    background: #45a049;
+}
+
+.booked-status {
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: #2196f3;
+    color: white;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.view-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.view-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background: #f0f0f0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.view-button.active {
+    background: #2196f3;
+    color: white;
+}
+
+.schedule-cell-empty {
+    height: 100%;
+    background: #f8f9fa;
+    border-radius: 4px;
+}

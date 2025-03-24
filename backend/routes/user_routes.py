@@ -3,6 +3,8 @@ from datetime import datetime
 from ..models.user import User  # Используем относительный импорт
 from .. import db  # Импортируем db из корневого __init__.py
 from ..models.purchased_subscription import PurchasedSubscription  # Импортируем модель PurchasedSubscription
+from ..models.client_schedule import ClientSchedule
+from ..models.week_schedule import Schedule
 
 # Создаем Blueprint
 user_bp = Blueprint('user', __name__)
@@ -137,4 +139,40 @@ def search_users():
         return jsonify(result)
     
     return jsonify([user.to_json() for user in users])
+
+@user_bp.route('/api/users/<int:user_id>/bookings', methods=['GET'])
+def get_user_bookings(user_id):
+    try:
+        # Получаем все активные записи пользователя
+        bookings = db.session.query(ClientSchedule).join(
+            Schedule,
+            ClientSchedule.schedule_id == Schedule.id
+        ).filter(
+            ClientSchedule.client_id == user_id,
+            ClientSchedule.status == 'Записан'  # Фильтруем только активные записи
+        ).all()
+
+        bookings_data = []
+        for booking in bookings:
+            schedule = booking.schedule
+            if schedule:
+                booking_data = {
+                    'id': booking.id,
+                    'schedule_id': schedule.id,
+                    'direction_name': schedule.direction.name if schedule.direction else None,
+                    'trainer_name': schedule.trainer.user.name if schedule.trainer and schedule.trainer.user else None,
+                    'day_of_week': schedule.day_of_week,
+                    'start_time': schedule.start_time,
+                    'room_id': schedule.room_id,
+                    'status': booking.status,
+                    'week_id': schedule.week_id
+                }
+                bookings_data.append(booking_data)
+
+        print(f"Returning bookings for user {user_id}:", bookings_data)  # для отладки
+        return jsonify(bookings_data), 200
+
+    except Exception as e:
+        print(f"Error getting user bookings: {str(e)}")  # для отладки
+        return jsonify({'error': str(e)}), 500
 
