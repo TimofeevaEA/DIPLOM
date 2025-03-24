@@ -12,10 +12,12 @@ import Subscriptions from "./components/subscriptions/Subscriptions";
 import AdminPurchaseSubscription from "./components/subscriptions/AdminPurchaseSubscription";
 import Schedule from "./components/schedule/Schedule";
 import ClientSchedule from "./components/client/schedule/ClientSchedule";
+import TrainerSchedule from "./components/trainerview/schedule/TrainerSchedule";
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -23,9 +25,11 @@ function App() {
       if (savedUser) {
         const user = JSON.parse(savedUser);
         setIsAdmin(user.role === 'admin');
+        setCurrentUser(user);
         setIsAuthenticated(true);
       } else {
         setIsAdmin(false);
+        setCurrentUser(null);
         setIsAuthenticated(false);
       }
     };
@@ -68,14 +72,24 @@ function App() {
       <AdminPurchaseSubscription />
       <Schedule />
       <Footer />
-      
+    </>
+  );
+
+  const trainerComponents = (
+    <>
+      <Header />
+      <Promo />
+      <TrainerSchedule />
+      <Footer />
     </>
   );
 
   return (
     <>
-      {isAuthenticated ? (
-        isAdmin ? adminComponents : userComponents
+      {isAuthenticated && currentUser ? (
+        isAdmin ? adminComponents : 
+        currentUser.role === 'trainer' ? trainerComponents : 
+        userComponents
       ) : (
         // Если пользователь не авторизован, показываем базовые компоненты
         <> 

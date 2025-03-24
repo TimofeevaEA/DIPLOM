@@ -274,4 +274,23 @@ def get_schedule(schedule_id):
         schedule = Schedule.query.get_or_404(schedule_id)
         return jsonify(schedule.to_json())
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@schedule_bp.route('/api/schedule/week/<int:week_id>/trainer/<int:trainer_id>', methods=['GET'])
+def get_trainer_schedule(week_id, trainer_id):
+    try:
+        # Получаем тренера по ID пользователя
+        trainer = Trainer.query.filter_by(user_id=trainer_id).first()
+        if not trainer:
+            return jsonify({'error': 'Тренер не найден'}), 404
+
+        # Получаем расписание тренера
+        schedules = Schedule.query.filter_by(
+            week_id=week_id,
+            trainer_id=trainer.id
+        ).all()
+
+        return jsonify([schedule.to_json() for schedule in schedules])
+    except Exception as e:
+        print(f"Error fetching trainer schedule: {str(e)}")
         return jsonify({'error': str(e)}), 500 
