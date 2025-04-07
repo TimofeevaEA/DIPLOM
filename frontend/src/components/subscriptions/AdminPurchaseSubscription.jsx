@@ -180,6 +180,8 @@ function AdminPurchaseSubscription() {
                 <div className="form-group">
                     <label>Выберите пользователя:</label>
                     <select
+                        title="Выберите пользователя"
+                        aria-label="Выберите пользователя"
                         value={selectedUser?.id || ''}
                         onChange={(e) => setSelectedUser(users.find(user => user.id === parseInt(e.target.value)))}
                     >
@@ -195,6 +197,8 @@ function AdminPurchaseSubscription() {
                 <div className="form-group">
                     <label>Выберите абонемент:</label>
                     <select
+                        title="Выберите абонемент"
+                        aria-label="Выберите абонемент"
                         value={selectedSubscription?.id || ''}
                         onChange={(e) => setSelectedSubscription(subscriptions.find(sub => sub.id === parseInt(e.target.value)))}
                     >
@@ -241,6 +245,9 @@ function AdminPurchaseSubscription() {
                                                 })}
                                                 min="0"
                                                 required
+                                                placeholder="Количество оставшихся занятий"
+                                                title="Оставшиеся занятия"
+                                                aria-label="Оставшиеся занятия"
                                             />
                                         </div>
                                         <div className="edit-form-group">
@@ -253,6 +260,8 @@ function AdminPurchaseSubscription() {
                                                     purchase_date: e.target.value
                                                 })}
                                                 required
+                                                title="Дата покупки"
+                                                aria-label="Дата покупки"
                                             />
                                         </div>
                                         <div className="edit-form-buttons">

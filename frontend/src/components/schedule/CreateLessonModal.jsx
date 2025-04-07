@@ -119,6 +119,9 @@ const CreateLessonModal = React.memo(({ cellData, onClose, onSave }) => {
               onChange={(e) => setFormData({...formData, capacity: parseInt(e.target.value)})}
               min="1"
               required
+              placeholder="Введите количество мест"
+              title="Количество мест"
+              aria-label="Количество мест"
             />
           </div>
 

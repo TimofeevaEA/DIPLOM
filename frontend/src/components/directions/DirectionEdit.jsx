@@ -118,6 +118,9 @@ function DirectionEdit() {
             value={formData.name}
             onChange={(e) => setFormData({...formData, name: e.target.value})}
             required
+            placeholder="Введите название"
+            title="Название направления"
+            aria-label="Название направления"
           />
         </div>
 
@@ -126,6 +129,9 @@ function DirectionEdit() {
           <textarea
             value={formData.description}
             onChange={(e) => setFormData({...formData, description: e.target.value})}
+            placeholder="Введите описание"
+            title="Описание направления"
+            aria-label="Описание направления"
           />
         </div>
 
@@ -151,6 +157,8 @@ function DirectionEdit() {
             type="file"
             onChange={handleFileChange}
             accept="image/*"
+            title="Выберите фото"
+            aria-label="Выберите фото"
           />
         </div>
 

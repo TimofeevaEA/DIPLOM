@@ -142,6 +142,8 @@ const Users = () => {
                                 value={formData.name}
                                 onChange={(e) => setFormData({...formData, name: e.target.value})}
                                 required
+                                title="Имя пользователя"
+                                aria-label="Имя пользователя"
                             />
                         </div>
                         <div className="form-group">
@@ -151,6 +153,8 @@ const Users = () => {
                                 value={formData.email}
                                 onChange={(e) => setFormData({...formData, email: e.target.value})}
                                 required
+                                title="Email пользователя"
+                                aria-label="Email пользователя"
                             />
                         </div>
                         <div className="form-group">
@@ -160,6 +164,8 @@ const Users = () => {
                                 value={formData.phone}
                                 onChange={(e) => setFormData({...formData, phone: e.target.value})}
                                 required
+                                title="Телефон пользователя"
+                                aria-label="Телефон пользователя"
                             />
                         </div>
                         <div className="form-group">
@@ -169,6 +175,8 @@ const Users = () => {
                                 value={formData.password}
                                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                                 required={!editingId}
+                                title="Пароль пользователя"
+                                aria-label="Пароль пользователя"
                             />
                         </div>
                         <div className="form-group">
@@ -177,10 +185,14 @@ const Users = () => {
                                 value={formData.birth_date}
                                 onChange={(e) => setFormData({...formData, birth_date: e.target.value})}
                                 required
+                                title="Дата рождения"
+                                aria-label="Дата рождения"
                             />
                         </div>
                         <div className="form-group">
                             <select
+                                title="Выберите роль пользователя"
+                                aria-label="Выберите роль пользователя"
                                 value={formData.role}
                                 onChange={(e) => setFormData({...formData, role: e.target.value})}
                                 required

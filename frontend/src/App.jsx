@@ -1,3 +1,5 @@
+import './fonts/geometria-medium.woff';
+import './fonts/geometria-bold.woff';
 import Header from "./components/header/Header";
 import Directions from "./components/directions/Directions";
 import Promo from "./components/promo/Promo";
@@ -13,7 +15,7 @@ import AdminPurchaseSubscription from "./components/subscriptions/AdminPurchaseS
 import Schedule from "./components/schedule/Schedule";
 import ClientSchedule from "./components/client/schedule/ClientSchedule";
 import TrainerSchedule from "./components/trainerview/schedule/TrainerSchedule";
-
+import ArticleEditor from "./components/article/ArticleEditor";
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -71,6 +73,7 @@ function App() {
       <Subscriptions />
       <AdminPurchaseSubscription />
       <Schedule />
+      <ArticleEditor />
       <Footer />
     </>
   );

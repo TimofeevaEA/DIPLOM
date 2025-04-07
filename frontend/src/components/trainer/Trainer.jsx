@@ -117,6 +117,8 @@ function Trainer() {
                     <div className="form-group">
                         <label>Пользователь:</label>
                         <select
+                            title="Выберите пользователя"
+                            aria-label="Выберите пользователя"
                             value={formData.user_id}
                             onChange={(e) => setFormData({...formData, user_id: e.target.value})}
                             required
@@ -136,6 +138,9 @@ function Trainer() {
                             value={formData.description}
                             onChange={(e) => setFormData({...formData, description: e.target.value})}
                             required
+                            placeholder="Введите описание тренера"
+                            title="Описание тренера"
+                            aria-label="Описание тренера"
                         />
                     </div>
 
@@ -145,6 +150,8 @@ function Trainer() {
                             type="file"
                             onChange={handleFileChange}
                             accept="image/*"
+                            title="Выберите фото тренера"
+                            aria-label="Выберите фото тренера"
                         />
                     </div>
 
