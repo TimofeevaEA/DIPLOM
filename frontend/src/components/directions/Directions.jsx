@@ -72,19 +72,21 @@ const Directions = () => {
                             display: 'flex'
                         }}
                     >
-                        {infiniteDirections.map((direction, index) => (
-                            <div className="directions_card" key={index}>
-                                <img 
-                                    src={direction.photo || '/img/directions/default.png'} 
-                                    alt={direction.name} 
-                                    className="directions_card_img" 
-                                />
-                                <div className="directions_card_content">
-                                    <div className="directions_card_title">{direction.name}</div>
-                                    <div className="directions_card_description">{direction.description}</div>
+                        {infiniteDirections.map((direction, index) => {
+                            return (
+                                <div className="directions_card" key={index}>
+                                    <img 
+                                        src={direction.photo ? `/img/directions/${direction.photo}` : '/img/directions/default.png'} 
+                                        alt={direction.name} 
+                                        className="directions_card_img" 
+                                    />
+                                    <div className="directions_card_content">
+                                        <div className="directions_card_title">{direction.name}</div>
+                                        <div className="directions_card_description">{direction.description}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                     <button className="directions_slider_button left" onClick={handlePrev}>←</button>
                     <button className="directions_slider_button right" onClick={handleNext}>→</button>

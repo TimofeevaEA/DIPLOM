@@ -7,7 +7,8 @@ from .. import db
 directions = Blueprint('directions', __name__)
 
 # Определяем абсолютный путь к папке uploads
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads/directions')
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 
+                            'frontend', 'public', 'img', 'directions')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # Добавляем маршрут для раздачи файлов
@@ -20,18 +21,18 @@ def allowed_file(filename):
 
 @directions.route('/api/directions', methods=['GET'])
 def get_directions():
-    all_directions = Directions.query.all()
-    # Формируем полные URL для фотографий
-    directions_data = []
-    for direction in all_directions:
-        direction_dict = direction.to_json()
-        if direction_dict['photo']:
-            # Убираем начальный слеш, если он есть
-            photo_path = direction_dict['photo'].lstrip('/')
-            # Формируем полный URL для фото
-            direction_dict['photo'] = f'http://localhost:5000/{photo_path}'
-        directions_data.append(direction_dict)
-    return jsonify(directions_data)
+    try:
+        all_directions = Directions.query.all()
+        directions_data = []
+        for direction in all_directions:
+            direction_dict = direction.to_json()
+            if direction_dict['photo']:
+                filename = os.path.basename(direction_dict['photo'])
+                direction_dict['photo'] = filename
+            directions_data.append(direction_dict)
+        return jsonify(directions_data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @directions.route('/api/directions', methods=['POST'])
 def create_direction():
@@ -48,7 +49,7 @@ def create_direction():
                 if not os.path.exists(UPLOAD_FOLDER):
                     os.makedirs(UPLOAD_FOLDER)
                 file.save(os.path.join(UPLOAD_FOLDER, filename))
-                photo_path = f'/uploads/directions/{filename}'
+                photo_path = filename  # Сохраняем только имя файла
 
         new_direction = Directions(
             name=name,
@@ -84,7 +85,7 @@ def update_direction(id):
                 if not os.path.exists(UPLOAD_FOLDER):
                     os.makedirs(UPLOAD_FOLDER)
                 file.save(os.path.join(UPLOAD_FOLDER, filename))
-                direction.photo = f'/uploads/directions/{filename}'
+                direction.photo = f'/img/directions/{filename}'
         
         db.session.commit()
         return jsonify(direction.to_json())
