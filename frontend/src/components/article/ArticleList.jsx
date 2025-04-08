@@ -83,9 +83,7 @@ const ArticleList = () => {
                                         {article.category === 'sport' ? 'Спорт' : 'Питание'}
                                     </span>
                                 </div>
-                                <div className="article-preview">
-                                    {article.content.replace(/<[^>]+>/g, '').slice(0, 150)}...
-                                </div>
+                                
                                 <Link 
                                     to={`/articles/${article.id}`} 
                                     className="read-more"

@@ -1,3 +1,4 @@
+/* Стили для списка всех статей */
 .articles-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -32,90 +33,123 @@
     gap: 30px;
 }
 
+/* Стили для секции последних обновлений */
+.recent-articles {
+    padding: 60px 0;
+    background-color: #fff;
+}
+
+.recent-articles-header {
+    text-align: left;
+    margin-bottom: 40px;
+}
+
+.recent-articles-header h1 {
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.info-text {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.4;
+}
+
+/* Сетка для последних обновлений */
+.recent-articles .articles-grid {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* Общие стили для карточек */
 .article-card {
     background: #fff;
-    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
 }
 
-.article-card:hover {
-    transform: translateY(-5px);
+/* Специфичные стили для карточек в последних обновлениях */
+.recent-articles .article-card {
+    width: 220px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.66);
 }
 
+/* Стили для изображений */
 .article-image {
-    height: 200px;
     overflow: hidden;
+}
+
+.recent-articles .article-image {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    margin-bottom: 10px;
 }
 
 .article-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
 }
 
-.article-card:hover .article-image img {
-    transform: scale(1.05);
-}
-
-.article-content {
-    padding: 20px;
-}
-
-.article-content h2 {
-    margin: 0 0 10px;
-    font-size: 20px;
-    color: #333;
-}
-
-.article-meta {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
+/* Стили для заголовков */
+.recent-articles .article-card h3 {
     font-size: 14px;
-    color: #666;
+    text-align: center;
+    margin: 6px 0;
+    padding: 0 6px;
+    min-height: 36px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-.article-category {
-    background: #4CAF50;
+/* Кнопка подробнее */
+.details-button {
+    padding: 8px 16px;
+    background: #C62E77;
     color: white;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-}
-
-.article-preview {
-    color: #666;
-    margin-bottom: 15px;
-    line-height: 1.5;
-}
-
-.read-more {
-    display: inline-block;
-    color: #4CAF50;
+    border-radius: 30px;
     text-decoration: none;
-    font-weight: 600;
-    transition: color 0.3s ease;
+    font-size: 12px;
+    margin-top: auto;
+    transition: background 0.3s ease;
 }
 
-.read-more:hover {
-    color: #45a049;
+.details-button:hover {
+    background: #95245b;
 }
 
-.loading {
-    text-align: center;
-    padding: 40px;
-    font-size: 18px;
-    color: #666;
-}
-
-.no-articles {
-    text-align: center;
-    padding: 40px;
-    color: #666;
-    grid-column: 1 / -1;
+/* Адаптивность */
+@media (max-width: 1024px) {
+    .recent-articles .articles-grid {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+    
+    .recent-articles .article-card {
+        width: calc(50% - 10px);
+    }
+    
+    .recent-articles-header h1 {
+        /* font-size: 36px; - убираем */
+    }
 }
 
 @media (max-width: 768px) {
@@ -127,4 +161,22 @@
     .articles-grid {
         grid-template-columns: 1fr;
     }
-} 
+    
+    .recent-articles .articles-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .recent-articles .article-card {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .recent-articles-header {
+        text-align: center;
+    }
+    
+    .recent-articles-header h1 {
+        /* font-size: 32px; - убираем */
+    }
+}
