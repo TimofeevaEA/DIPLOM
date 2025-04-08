@@ -1,0 +1,130 @@
+.articles-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    margin-top: 100px;
+    padding: 20px;
+}
+
+.articles-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.articles-header h1 {
+    font-size: 32px;
+    color: #333;
+    margin: 0;
+}
+
+.category-filter select {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.article-card {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.article-card:hover {
+    transform: translateY(-5px);
+}
+
+.article-image {
+    height: 200px;
+    overflow: hidden;
+}
+
+.article-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.article-card:hover .article-image img {
+    transform: scale(1.05);
+}
+
+.article-content {
+    padding: 20px;
+}
+
+.article-content h2 {
+    margin: 0 0 10px;
+    font-size: 20px;
+    color: #333;
+}
+
+.article-meta {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+.article-category {
+    background: #4CAF50;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.article-preview {
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.read-more {
+    display: inline-block;
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.read-more:hover {
+    color: #45a049;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #666;
+}
+
+.no-articles {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+    .articles-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .articles-grid {
+        grid-template-columns: 1fr;
+    }
+} 

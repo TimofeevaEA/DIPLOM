@@ -1,21 +1,32 @@
 import './fonts/geometria-medium.woff';
 import './fonts/geometria-bold.woff';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
 import Header from "./components/header/Header";
-import Directions from "./components/directions/Directions";
-import Promo from "./components/promo/Promo";
 import Footer from "./components/footer/Footer";
+import Promo from "./components/promo/Promo";
 import Users from "./components/users/Users";
-import Categories from "./components/categories/Categories";
+
+import Directions from "./components/directions/Directions";
 import DirectionEdit from "./components/directions/DirectionEdit";
+
+import Categories from "./components/categories/Categories";
 import Trainer from "./components/trainer/Trainer";
 import ViewTrainer from "./components/trainer/ViewTrainer";
-import { useState, useEffect } from "react";
+
 import Subscriptions from "./components/subscriptions/Subscriptions";
 import AdminPurchaseSubscription from "./components/subscriptions/AdminPurchaseSubscription";
+
 import Schedule from "./components/schedule/Schedule";
 import ClientSchedule from "./components/client/schedule/ClientSchedule";
 import TrainerSchedule from "./components/trainerview/schedule/TrainerSchedule";
+
 import ArticleEditor from "./components/article/ArticleEditor";
+import ArticleList from './components/article/ArticleList';
+import ArticleView from './components/article/ArticleView';
+
+import { useEffect, useState } from 'react';
+
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -38,72 +49,44 @@ function App() {
 
     checkAuth();
 
-    const handleAuthChange = () => {
-      checkAuth();
-    };
-
-    window.addEventListener('authChange', handleAuthChange);
-    return () => {
-      window.removeEventListener('authChange', handleAuthChange);
-    };
+    window.addEventListener('authChange', checkAuth);
+    return () => window.removeEventListener('authChange', checkAuth);
   }, []);
 
-  // Компоненты для обычного пользователя
-  const userComponents = (
-    <>
-      <Header />
-      <Promo />
-      <Directions />
-      <ClientSchedule />
-      <Footer />
-    </>
-  );
-
-  // Компоненты для администратора
-  const adminComponents = (
-    <>
-      <Header />
-      <Promo />
-      <ViewTrainer />
-      <Directions />
-      <DirectionEdit />
-      <Users />
-      <Categories />
-      <Trainer />
-      <Subscriptions />
-      <AdminPurchaseSubscription />
-      <Schedule />
-      <ArticleEditor />
-      <Footer />
-    </>
-  );
-
-  const trainerComponents = (
-    <>
-      <Header />
-      <Promo />
-      <TrainerSchedule />
-      <Footer />
-    </>
-  );
-
   return (
-    <>
-      {isAuthenticated && currentUser ? (
-        isAdmin ? adminComponents : 
-        currentUser.role === 'trainer' ? trainerComponents : 
-        userComponents
-      ) : (
-        // Если пользователь не авторизован, показываем базовые компоненты
-        <> 
-          <Users />
-          <Header />
-          <Promo />
-          <Footer />
-        </>
-      )}
-    </>
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Promo />} />
+        <Route path="/directions" element={<Directions />} />
+        <Route path="/schedule" element={
+          currentUser?.role === 'trainer' ? <TrainerSchedule /> :
+          currentUser?.role === 'admin' ? <Schedule /> :
+          <ClientSchedule />
+        } />
+        <Route path="/articles" element={<ArticleList />} />
+        <Route path="/articles/:id" element={<ArticleView />} />
+
+        {/* Только для администратора */}
+        {isAdmin && (
+          <>
+            <Route path="/admin/view-trainers" element={<ViewTrainer />} />
+            <Route path="/admin/direction-edit" element={<DirectionEdit />} />
+            <Route path="/admin/users" element={<Users />} />
+            <Route path="/admin/categories" element={<Categories />} />
+            <Route path="/admin/trainers" element={<Trainer />} />
+            <Route path="/admin/subscriptions" element={<Subscriptions />} />
+            <Route path="/admin/purchase-subscription" element={<AdminPurchaseSubscription />} />
+            <Route path="/admin/articles/edit" element={<ArticleEditor />} />
+          </>
+        )}
+
+        {/* Маршрут по умолчанию */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+      <Footer />
+    </Router>
   );
 }
 
-export default App
+export default App;
