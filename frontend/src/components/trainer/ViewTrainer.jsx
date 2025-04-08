@@ -34,13 +34,16 @@ function ViewTrainer() {
                         trainers.map(trainer => (
                             <div key={trainer.id} className="trainer-card">
                                 <div className="trainer-image-container">
-                                    <img 
-                                        src={trainer.photo} 
-                                        alt={`Фото тренера ${trainer.user_name}`}
-                                        className="trainer-image"
-                                        onLoad={handleImageLoad}
-                                        onError={(e) => console.log('Ошибка загрузки изображения:', e)}
-                                    />
+                                <img 
+                                    src={trainer.photo ? `/img/trainers/${trainer.photo}` : '/img/default-trainer.jpg'} 
+                                    alt={`Фото тренера ${trainer.user_name}`}
+                                    className="trainer-image"
+                                    onLoad={handleImageLoad}
+                                    onError={(e) => {
+                                        console.error('Ошибка загрузки изображения:', e.target.src);
+                                        e.target.src = '/img/default-trainer.jpg'; // Fallback изображение
+                                    }}
+                                />
                                 </div>
                                 <div className="trainer-info">
                                     <p className="trainer-specialization">{trainer.user_name}</p>

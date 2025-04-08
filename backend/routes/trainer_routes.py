@@ -7,14 +7,10 @@ from .. import db
 
 trainers = Blueprint('trainers', __name__)
 
-# Определяем абсолютный путь к папке uploads
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads/trainers')
+# Изменяем путь для загрузки
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 
+                            'frontend', 'public', 'img', 'trainers')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-
-# Маршрут для раздачи файлов
-@trainers.route('/uploads/trainers/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -27,16 +23,15 @@ def get_trainers():
         result = []
         for trainer in trainers:
             trainer_data = trainer.to_json()
-            if trainer.user:  # Проверяем наличие связанного пользователя
+            if trainer.user:
                 trainer_data['user_name'] = trainer.user.name
             if trainer_data['photo']:
-                trainer_data['photo'] = f'http://localhost:5000{trainer_data["photo"]}'
+                # Возвращаем только имя файла
+                trainer_data['photo'] = os.path.basename(trainer_data['photo'])
             result.append(trainer_data)
-        
-        print("Returning trainers:", result)  # Отладочный вывод
         return jsonify(result)
     except Exception as e:
-        print("Error in get_trainers:", str(e))  # Отладочный вывод
+        print("Error in get_trainers:", str(e))
         return jsonify({'error': str(e)}), 500
 
 # Создание нового тренера
@@ -54,7 +49,7 @@ def create_trainer():
                 if not os.path.exists(UPLOAD_FOLDER):
                     os.makedirs(UPLOAD_FOLDER)
                 file.save(os.path.join(UPLOAD_FOLDER, filename))
-                photo_path = f'/uploads/trainers/{filename}'
+                photo_path = filename  # Сохраняем только имя файла
 
         new_trainer = Trainer(
             description=description,
@@ -89,7 +84,7 @@ def update_trainer(id):
                 if not os.path.exists(UPLOAD_FOLDER):
                     os.makedirs(UPLOAD_FOLDER)
                 file.save(os.path.join(UPLOAD_FOLDER, filename))
-                trainer.photo = f'/uploads/trainers/{filename}'
+                trainer.photo = f'/img/trainers/{filename}'
         
         db.session.commit()
         return jsonify(trainer.to_json())

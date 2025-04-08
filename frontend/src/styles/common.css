@@ -1,26 +1,9 @@
-@font-face {
-    font-family: 'Geometria';
-    src: url('/src/fonts/geometria-bold.woff') format('woff');
-    font-weight: bold;
-    font-style: normal;
-}
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap');
 
-@font-face {
-    font-family: 'Geometria';
-    src: url('/src/fonts/geometria-light.woff') format('woff');
-    font-weight: 300;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Geometria';
-    src: url('/src/fonts/geometria-medium.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
-}
 
 body {
-    font-family: 'Geometria', sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
 }
 
 .container {

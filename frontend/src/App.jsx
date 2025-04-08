@@ -1,12 +1,12 @@
-import './fonts/geometria-medium.woff';
-import './fonts/geometria-bold.woff';
+import './styles/common.css';
+
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 import Promo from "./components/promo/Promo";
 import Users from "./components/users/Users";
-
+import Home from "./components/conclusion/Home";
 import Directions from "./components/directions/Directions";
 import DirectionEdit from "./components/directions/DirectionEdit";
 
@@ -57,7 +57,7 @@ function App() {
     <Router>
       <Header />
       <Routes>
-        <Route path="/" element={<Promo />} />
+        <Route path="/" element={<Home />} />
         <Route path="/directions" element={<Directions />} />
         <Route path="/schedule" element={
           currentUser?.role === 'trainer' ? <TrainerSchedule /> :
@@ -68,18 +68,16 @@ function App() {
         <Route path="/articles/:id" element={<ArticleView />} />
 
         {/* Только для администратора */}
-        {isAdmin && (
-          <>
-            <Route path="/admin/view-trainers" element={<ViewTrainer />} />
-            <Route path="/admin/direction-edit" element={<DirectionEdit />} />
-            <Route path="/admin/users" element={<Users />} />
-            <Route path="/admin/categories" element={<Categories />} />
-            <Route path="/admin/trainers" element={<Trainer />} />
-            <Route path="/admin/subscriptions" element={<Subscriptions />} />
-            <Route path="/admin/purchase-subscription" element={<AdminPurchaseSubscription />} />
-            <Route path="/admin/articles/edit" element={<ArticleEditor />} />
-          </>
-        )}
+        <>
+          <Route path="/admin/view-trainers" element={<ViewTrainer />} />
+          <Route path="/admin/direction-edit" element={<DirectionEdit />} />
+          <Route path="/admin/users" element={<Users />} />
+          <Route path="/admin/categories" element={<Categories />} />
+          <Route path="/admin/trainers" element={<Trainer />} />
+          <Route path="/admin/subscriptions" element={<Subscriptions />} />
+          <Route path="/admin/purchase-subscription" element={<AdminPurchaseSubscription />} />
+          <Route path="/admin/articles/edit" element={<ArticleEditor />} />
+        </>
 
         {/* Маршрут по умолчанию */}
         <Route path="*" element={<Navigate to="/" />} />

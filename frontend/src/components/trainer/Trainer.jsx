@@ -181,9 +181,13 @@ function Trainer() {
                     <div key={trainer.id} className="trainer-item">
                         <div className="trainer-content">
                             <img 
-                                src={trainer.photo} 
+                                src={trainer.photo ? `/img/trainers/${trainer.photo}` : '/img/default-trainer.jpg'}
                                 alt="Фото тренера" 
                                 className="trainer-photo"
+                                onError={(e) => {
+                                    console.error('Ошибка загрузки изображения:', e.target.src);
+                                    e.target.src = '/img/default-trainer.jpg';
+                                }}
                             />
                             <div className="info">
                                 <p>{trainer.description}</p>

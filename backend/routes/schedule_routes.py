@@ -16,7 +16,7 @@ def get_schedule_by_week(week_id):
         schedules = Schedule.query.filter_by(week_id=week_id).all()
         return jsonify([schedule.to_json() for schedule in schedules])
     except Exception as e:
-        print(f"Error fetching schedule: {str(e)}")  # для отладки
+        print(f"Error fetching schedule: {str(e)}") 
         return jsonify({'error': str(e)}), 500
 
 # Создать новую запись в расписании
@@ -34,8 +34,8 @@ def create_schedule():
             room_id=data['room_id'],
             trainer_id=data['trainer_id'],
             capacity=data['capacity'],
-            spots_left=data['capacity'],  # Устанавливаем начальное значение равным capacity
-            is_completed=False  # По умолчанию тренировка не проведена
+            spots_left=data['capacity'], 
+            is_completed=False  
         )
         
         db.session.add(new_schedule)
@@ -73,7 +73,6 @@ def update_schedule(schedule_id):
                     'error': 'Некорректный формат времени (требуется HH:MM)'
                 }), 400
 
-        # Обновление остальных полей
         if 'direction_id' in data:
             schedule.direction_id = data['direction_id']
         if 'room' in data:
