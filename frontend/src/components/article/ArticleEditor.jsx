@@ -86,11 +86,12 @@ const ArticleEditor = () => {
     };
 
     return (
-        <div className="article-editor">
-            <h2>Создание новой статьи</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="title">Название статьи:</label>
+            
+            <div className="article-editor">
+                <h1>Создание новой статьи</h1>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label htmlFor="title">Название статьи:</label>
                     <input
                         id="title"
                         type="text"
@@ -114,6 +115,7 @@ const ArticleEditor = () => {
                     >
                         <option value="sport">Спорт</option>
                         <option value="food">Питание</option>
+                        <option value="news">Новости</option>
                     </select>
                 </div>
 

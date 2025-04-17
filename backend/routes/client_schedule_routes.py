@@ -146,4 +146,169 @@ def complete_training(schedule_id):
         
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 400 
+        return jsonify({'error': str(e)}), 400
+
+# Получить историю тренировок клиента
+@client_schedule_bp.route('/api/users/<int:client_id>/training-history', methods=['GET'])
+def get_client_training_history(client_id):
+    try:
+        # Получаем параметры пагинации
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int) # По умолчанию 10 записей на страницу
+        
+        # Получаем записи со статусами 'Посетил' и 'Пропустил'
+        query = ClientSchedule.query.filter(
+            ClientSchedule.client_id == client_id,
+            ClientSchedule.status.in_(['Посетил', 'Пропустил'])
+        ).order_by(ClientSchedule.id.desc()) # сортировка от новых к старым
+        
+        # Применяем пагинацию
+        pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+        bookings = pagination.items
+        
+        result = []
+        for booking in bookings:
+            schedule = booking.schedule
+            if not schedule:
+                continue
+            
+            # Получаем данные о тренере
+            trainer_name = "Не указан"
+            if schedule.trainer and schedule.trainer.user:
+                trainer_name = schedule.trainer.user.name
+            
+            # Получаем данные о направлении
+            direction_name = "Не указано"
+            if schedule.direction:
+                direction_name = schedule.direction.name
+            
+            # Получаем точную дату тренировки
+            training_date = None
+            if schedule.week and hasattr(schedule.week, 'start_date'):
+                from datetime import datetime, timedelta
+                start_date = schedule.week.start_date
+                if isinstance(start_date, str):
+                    start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+                training_date = start_date + timedelta(days=schedule.day_of_week - 1)
+                training_date = training_date.strftime('%Y-%m-%d')
+            
+            # Формируем полную информацию о тренировке
+            booking_data = {
+                'id': booking.id,
+                'status': booking.status,
+                'direction_name': direction_name,
+                'trainer_name': trainer_name,
+                'day_of_week': schedule.day_of_week,
+                'start_time': schedule.start_time,
+                'week_id': schedule.week_id,
+                'training_date': training_date
+            }
+            result.append(booking_data)
+        
+        # Возвращаем данные с информацией о пагинации
+        return jsonify({
+            'items': result,
+            'total': pagination.total,
+            'pages': pagination.pages,
+            'current_page': page,
+            'per_page': per_page,
+            'has_next': pagination.has_next,
+            'has_prev': pagination.has_prev,
+            'next_page': page + 1 if pagination.has_next else None,
+            'prev_page': page - 1 if pagination.has_prev else None
+        })
+    except Exception as e:
+        print(f"Error fetching training history: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+# Добавляем новый маршрут для получения архива тренировок
+@client_schedule_bp.route('/api/users/<int:client_id>/training-archive', methods=['GET'])
+def get_training_archive(client_id):
+    try:
+        # Получаем записи со статусами "Посетил" и "Пропустил"
+        bookings = ClientSchedule.query.filter(
+            ClientSchedule.client_id == client_id,
+            ClientSchedule.status.in_(['Посетил', 'Пропустил'])
+        ).all()
+        
+        # Формируем список с данными о тренировках
+        result = []
+        for booking in bookings:
+            schedule = booking.schedule
+            if schedule:
+                # Безопасное получение имени тренера
+                trainer_name = "Не указан"
+                try:
+                    if schedule.trainer:
+                        # Проверим все возможные поля имени
+                        if hasattr(schedule.trainer, 'name'):
+                            trainer_name = schedule.trainer.name
+                        elif hasattr(schedule.trainer, 'full_name'):
+                            trainer_name = schedule.trainer.full_name
+                        elif hasattr(schedule.trainer, 'firstname'):
+                            trainer_name = schedule.trainer.firstname
+                except Exception as trainer_error:
+                    print(f"Error getting trainer name: {str(trainer_error)}")
+                
+                # Безопасное получение названия направления
+                direction_name = "Не указано"
+                try:
+                    if schedule.direction and hasattr(schedule.direction, 'name'):
+                        direction_name = schedule.direction.name
+                except Exception as direction_error:
+                    print(f"Error getting direction name: {str(direction_error)}")
+                
+                booking_data = {
+                    'id': booking.id,
+                    'status': booking.status,
+                    'schedule_id': booking.schedule_id,
+                    'direction_name': direction_name,
+                    'trainer_name': trainer_name,
+                    'day_of_week': schedule.day_of_week,
+                    'start_time': schedule.start_time,
+                    'week_id': schedule.week_id
+                }
+                result.append(booking_data)
+        
+        return jsonify(result)
+    except Exception as e:
+        print(f"Error fetching training archive: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@client_schedule_bp.route('/api/users/<int:client_id>/training-statistics', methods=['GET'])
+def get_client_training_statistics(client_id):
+    try:
+        # Получаем все бронирования пользователя
+        all_bookings = ClientSchedule.query.filter_by(client_id=client_id).all()
+        
+        # Считаем статистику
+        total = len(all_bookings)
+        attended = sum(1 for b in all_bookings if b.status == 'Посетил')
+        missed = sum(1 for b in all_bookings if b.status == 'Пропустил')
+        upcoming = sum(1 for b in all_bookings if b.status == 'Записан')
+        
+        # Группируем посещения по направлениям
+        directions = {}
+        for booking in all_bookings:
+            if booking.schedule and booking.schedule.direction:
+                direction_name = booking.schedule.direction.name
+                if direction_name not in directions:
+                    directions[direction_name] = {'total': 0, 'attended': 0, 'missed': 0}
+                
+                directions[direction_name]['total'] += 1
+                if booking.status == 'Посетил':
+                    directions[direction_name]['attended'] += 1
+                elif booking.status == 'Пропустил':
+                    directions[direction_name]['missed'] += 1
+        
+        return jsonify({
+            'total_bookings': total,
+            'attended': attended,
+            'missed': missed,
+            'upcoming': upcoming,
+            'directions': directions
+        })
+    
+    except Exception as e:
+        print(f"Error fetching training statistics: {str(e)}")
+        return jsonify({'error': str(e)}), 500 

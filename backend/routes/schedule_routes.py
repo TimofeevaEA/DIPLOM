@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from ..models.week_schedule import Schedule, DayOfWeek
+from ..models.week_schedule import Schedule, DayOfWeek, Week
 from ..models.directions import Directions
 from ..models.trainer import Trainer
 from ..models.client_schedule import ClientSchedule
@@ -292,4 +292,34 @@ def get_trainer_schedule(week_id, trainer_id):
         return jsonify([schedule.to_json() for schedule in schedules])
     except Exception as e:
         print(f"Error fetching trainer schedule: {str(e)}")
-        return jsonify({'error': str(e)}), 500 
+        return jsonify({'error': str(e)}), 500
+
+@schedule_bp.route('/api/schedule/today', methods=['GET'])
+def get_today_schedule():
+    today = datetime.now()
+    day_of_week = today.isoweekday()  # 1 for Monday, 7 for Sunday
+    
+    # Находим текущую неделю
+    current_week = Week.query.filter(
+        Week.start_date <= today,
+        Week.end_date >= today,
+        Week.is_template == False
+    ).first()
+    
+    if not current_week:
+        return jsonify([])
+    
+    # Получаем расписание на сегодня
+    schedule = Schedule.query.filter(
+        Schedule.week_id == current_week.id,
+        Schedule.day_of_week == day_of_week
+    ).order_by(Schedule.start_time).all()
+    
+    return jsonify([{
+        'id': item.id,
+        'start_time': item.start_time,
+        'direction_name': item.direction.name,
+        'trainer_name': item.trainer.user.name,
+        'capacity': item.capacity,
+        'spots_left': item.spots_left
+    } for item in schedule]) 

@@ -56,6 +56,7 @@ const ArticleList = () => {
                         <option value="all">Все категории</option>
                         <option value="sport">Спорт</option>
                         <option value="food">Питание</option>
+                        <option value="news">Новости</option>
                     </select>
                 </div>
             </div>
@@ -80,7 +81,7 @@ const ArticleList = () => {
                                         {formatDate(article.created_at)}
                                     </span>
                                     <span className="article-category">
-                                        {article.category === 'sport' ? 'Спорт' : 'Питание'}
+                                        {article.category === 'sport' ? 'Спорт' : article.category === 'food' ? 'Питание' : 'Новости'}
                                     </span>
                                 </div>
                                 

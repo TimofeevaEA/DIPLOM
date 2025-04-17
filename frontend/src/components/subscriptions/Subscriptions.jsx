@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Subscriptions.css';
 
 function Subscriptions() {
@@ -13,6 +13,34 @@ function Subscriptions() {
     const [editingId, setEditingId] = useState(null);
     const [message, setMessage] = useState(null);
 
+    // Добавляем ref для хранения таймера
+    const messageTimer = useRef(null);
+    
+    // Обновляем функцию установки сообщения
+    const setMessageWithTimeout = (messageData) => {
+        // Очищаем предыдущий таймер, если он есть
+        if (messageTimer.current) {
+            clearTimeout(messageTimer.current);
+        }
+        
+        // Устанавливаем сообщение
+        setMessage(messageData);
+        
+        // Устанавливаем таймер для автоматического скрытия сообщения через 3 секунды
+        messageTimer.current = setTimeout(() => {
+            setMessage(null);
+        }, 3000); // 3000 мс = 3 секунды
+    };
+    
+    // Очищаем таймер при размонтировании компонента
+    useEffect(() => {
+        return () => {
+            if (messageTimer.current) {
+                clearTimeout(messageTimer.current);
+            }
+        };
+    }, []);
+
     useEffect(() => {
         fetchSubscriptions();
     }, []);
@@ -23,7 +51,7 @@ function Subscriptions() {
             const data = await response.json();
             setSubscriptions(data);
         } catch (error) {
-            setMessage({ type: 'error', text: 'Ошибка при загрузке абонементов' });
+            setMessageWithTimeout({ type: 'error', text: 'Ошибка при загрузке абонементов' });
         }
     };
 
@@ -44,13 +72,13 @@ function Subscriptions() {
             });
 
             if (response.ok) {
-                setMessage({ type: 'success', text: `Абонемент успешно ${editingId ? 'обновлен' : 'создан'}` });
+                setMessageWithTimeout({ type: 'success', text: `Абонемент успешно ${editingId ? 'обновлен' : 'создан'}` });
                 setFormData({ name: '', session_count: '', day_count: '', price: '', discounted_price: '' });
                 setEditingId(null);
                 fetchSubscriptions();
             }
         } catch (error) {
-            setMessage({ type: 'error', text: 'Ошибка при сохранении абонемента' });
+            setMessageWithTimeout({ type: 'error', text: 'Ошибка при сохранении абонемента' });
         }
     };
 
@@ -61,11 +89,11 @@ function Subscriptions() {
                     method: 'DELETE'
                 });
                 if (response.ok) {
-                    setMessage({ type: 'success', text: 'Абонемент успешно удален' });
+                    setMessageWithTimeout({ type: 'success', text: 'Абонемент успешно удален' });
                     fetchSubscriptions();
                 }
             } catch (error) {
-                setMessage({ type: 'error', text: 'Ошибка при удалении абонемента' });
+                setMessageWithTimeout({ type: 'error', text: 'Ошибка при удалении абонемента' });
             }
         }
     };
@@ -82,7 +110,7 @@ function Subscriptions() {
     };
 
     return (
-        <div className="container">
+        <div className="container" style={{ marginTop: '100px' }}>
             <h1>УПРАВЛЕНИЕ АБОНЕМЕНТАМИ</h1>
             
             <div className="messages-container">

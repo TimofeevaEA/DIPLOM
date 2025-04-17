@@ -112,7 +112,7 @@ const Users = () => {
     };
 
     return (
-        <div className="user-management">
+        <div className="user-management" style={{ marginTop: '60px' }}>
             <div className="container">
                 <h1>Управление пользователями</h1>
                 

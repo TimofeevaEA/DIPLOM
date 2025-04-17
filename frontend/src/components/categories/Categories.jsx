@@ -97,7 +97,8 @@ function Categories() {
     };
 
     return (
-        <div className="categories-container">
+        <div className="categories-container" style={{ marginTop: '60px' }}>
+            <h1>Управление категориями</h1>
             <div className="messages-container">
                 {error && <div className="error-message">{error}</div>}
                 {success && <div className="success-message">{success}</div>}

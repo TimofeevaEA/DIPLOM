@@ -101,7 +101,7 @@ function DirectionEdit() {
   };
 
   return (
-    <div className="container">
+    <div className="container" style={{ marginTop: '100px' }}>
       <h1>Управление направлениями</h1>
       
       {message && (
@@ -186,13 +186,7 @@ function DirectionEdit() {
           <div key={direction.id} className="direction-item">
             <div className="direction-content">
               <h3>{direction.name}</h3>
-              {direction.photo && (
-                <img 
-                  src={`/img/directions/${direction.photo}`}
-                  alt={direction.name}
-                  className="direction-photo"
-                />
-              )}
+              
             </div>
             <div className="direction-actions">
               <button

@@ -44,6 +44,7 @@ def create_app():
     from .routes.schedule_routes import schedule_bp
     from .routes.room_routes import rooms_bp
     from .routes.article_routes import articles_bp  # Добавляем импорт роутов для статей
+    from .routes.client_schedule_routes import client_schedule_bp
     
     app.register_blueprint(user_bp)
     app.register_blueprint(auth_bp)
@@ -56,6 +57,7 @@ def create_app():
     app.register_blueprint(schedule_bp)
     app.register_blueprint(rooms_bp)
     app.register_blueprint(articles_bp)  # Регистрируем блюпринт для статей
+    app.register_blueprint(client_schedule_bp)
     
     with app.app_context():
         db.create_all()

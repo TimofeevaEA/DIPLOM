@@ -183,3 +183,219 @@
     background: #f8f9fa;
     border-radius: 4px;
 }
+
+.booking-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Отступ между статусом и кнопкой */
+    margin-top: 5px;
+}
+
+.booked-status {
+    font-weight: bold;
+    color: #4CAF50; /* Зеленый цвет для статуса */
+}
+
+.cancel-button {
+    background-color: #f44336; /* Красный цвет */
+    color: white;
+    border: none;
+    padding: 4px 8px; /* Меньший размер кнопки */
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.cancel-button:hover {
+    background-color: #d32f2f;
+}
+
+.book-button {
+    background-color: #C62E77; /* Основной цвет сайта */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 5px;
+    transition: background-color 0.2s;
+}
+
+.book-button:hover {
+    background-color: #95245b;
+}
+
+/* Немного подправим отображение ячейки */
+.schedule-cell-content {
+    padding: 8px; /* Добавим немного отступов */
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.schedule-cell-content.booked {
+    background-color: #e8f5e9; /* Светло-зеленый фон для записанных */
+}
+
+.training-item > div {
+    margin-bottom: 4px; /* Небольшой отступ между строками в карточке */
+}
+
+/* Стили для архива тренировок */
+.archive-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.archive-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+    color: #666;
+    font-size: 18px;
+}
+
+.archive-item {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px; /* Увеличиваем отступы */
+    transition: transform 0.2s ease;
+    width: 100%; /* Занимаем всю доступную ширину */
+}
+
+.archive-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.archive-item-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 12px; /* Увеличиваем отступ снизу */
+    margin-bottom: 12px; /* Увеличиваем отступ сверху */
+}
+
+.archive-date {
+    font-weight: 500;
+    color: #333;
+    font-size: 16px; /* Увеличиваем размер шрифта */
+}
+
+.archive-time {
+    color: #666;
+    font-weight: 500;
+    font-size: 16px; /* Увеличиваем размер шрифта */
+}
+
+.archive-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Увеличиваем расстояние между элементами */
+}
+
+.archive-direction {
+    font-weight: bold;
+    font-size: 20px; /* Увеличиваем размер шрифта */
+    color: #C62E77;
+    margin-bottom: 8px;
+}
+
+.archive-trainer {
+    color: #555;
+    margin-bottom: 10px;
+    font-size: 16px; /* Увеличиваем размер шрифта */
+}
+
+.archive-status {
+    display: inline-block; /* Чтобы padding работал корректно */
+    margin-top: 8px;
+    padding: 6px 16px; /* Увеличиваем padding */
+    width: fit-content;
+    border-radius: 4px;
+    font-size: 15px; /* Увеличиваем размер шрифта */
+    font-weight: 500;
+}
+
+.archive-status.attended {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.archive-status.missed {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.error-message {
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 600px;
+    background-color: #ffebee;
+    color: #c62828;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для контейнера архива */
+.archive-container {
+    width: 100%;
+    max-width: 1000px; /* Увеличиваем максимальную ширину */
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Стили для пагинации */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 25px; /* Увеличиваем отступ сверху */
+    padding: 15px 0; /* Увеличиваем вертикальные отступы */
+    border-top: 1px solid #eee;
+}
+
+.pagination-button {
+    background-color: #C62E77;
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Увеличиваем размер кнопок */
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px; /* Увеличиваем размер шрифта */
+    transition: background-color 0.2s;
+}
+
+.pagination-button:hover {
+    background-color: #a1255f;
+}
+
+.pagination-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    color: #666;
+    font-size: 16px; /* Увеличиваем размер шрифта */
+    font-weight: 500;
+}
+
+/* Адаптивный дизайн */
+@media (max-width: 768px) {
+    .archive-container {
+        padding: 10px;
+    }
+    
+    .archive-item {
+        padding: 15px;
+    }
+}

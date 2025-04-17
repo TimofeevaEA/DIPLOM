@@ -1,5 +1,6 @@
 /* Используем БЭМ для именования классов */
 .content {
+  margin-top: 60px;
   padding: 20px;
 }
 
@@ -279,4 +280,36 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+}
+
+.schedule-cell-content {
+    position: relative; /* Необходимо для позиционирования кнопки */
+    /* ... остальные стили ... */
+}
+
+.delete-training-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(255, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
+    cursor: pointer;
+    padding: 0;
+    z-index: 10; /* Чтобы была поверх контента */
+    transition: background 0.2s;
+}
+
+.delete-training-btn:hover {
+    background: rgba(255, 0, 0, 0.8);
+}
+
+.training-item.completed .delete-training-btn {
+    display: none; /* Не показываем кнопку для завершенных */
 }

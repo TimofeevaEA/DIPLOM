@@ -15,7 +15,7 @@ class Article(db.Model):
 
     # Добавляем проверку на категорию
     __table_args__ = (
-        db.CheckConstraint(category.in_(['sport', 'food']), name='check_category'),
+        db.CheckConstraint(category.in_(['sport', 'food', 'news']), name='check_category'),
     )
 
     author = db.relationship(

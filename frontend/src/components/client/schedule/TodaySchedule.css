@@ -1,0 +1,88 @@
+
+
+
+.today-schedule__header {
+    margin-bottom: 20px;
+}
+
+.today-schedule__header h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    color: #000;
+    margin: 0 0 10px 0;
+}
+
+.today-date {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+    text-transform: capitalize;
+}
+
+.schedule-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.schedule-item {
+    display: grid;
+    grid-template-columns: 180px 1fr 150px;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #E5E5E5;
+}
+
+.time-slot {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000;
+}
+
+.training-info {
+    margin-top: 20px;
+    padding: 0 20px;
+}
+
+.training-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000;
+}
+
+.trainer-name {
+    font-size: 16px;
+    color: #666;
+    text-align: right;
+}
+
+/* Убираем нижнюю границу у последнего элемента */
+.schedule-item:last-child {
+    border-bottom: none;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    .container h1 {
+        font-size: 24px;
+    }
+
+    .schedule-item {
+        grid-template-columns: 1fr;
+        gap: 5px;
+        padding: 12px 0;
+    }
+
+    .time-slot,
+    .training-info,
+    .trainer-name {
+        text-align: left;
+    }
+
+    .trainer-name {
+        font-size: 14px;
+    }
+}

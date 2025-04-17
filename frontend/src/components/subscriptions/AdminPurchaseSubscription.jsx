@@ -164,7 +164,7 @@ function AdminPurchaseSubscription() {
     };
 
     return (
-        <div className="container">
+        <div className="container" style={{ marginTop: '100px' }}>
             <h1>Оформление абонемента</h1>
             
             <div className="messages-container">

@@ -3,6 +3,7 @@ import './header.css';
 import menuIcon from '/img/header/menu.png';
 import profileIcon from '/img/header/profile.png';
 import AuthModal from '../authorization/authorization';
+import { Link } from 'react-router-dom';
 
 function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -104,14 +105,39 @@ function Header() {
             <div className={`side_menu ${isMenuOpen ? 'open' : ''}`}>
                 <button className="close_button" onClick={toggleMenu}>×</button>
                 <ul className="menu_list">
-                    <li><a href="#section1">Расписание</a></li>
-                    <li><a href="#section2">Спорт</a></li>
-                    <li><a href="#section3">Питание</a></li>
+                    {/* Общие ссылки */}
+                    <li><Link to="/" onClick={toggleMenu}>Главная</Link></li>
+                    <li><Link to="/articles">Статьи</Link></li>
+                    <li><Link to="/directions">Направления</Link></li>
+                    
+                    {/* Ссылки для клиента (если залогинен и не админ/тренер) */}
+                    {currentUser && currentUser.role === 'user' && (
+                        <li><Link to="/schedule" onClick={toggleMenu}>Мое расписание</Link></li>
+                    )}
+
+                    {/* Ссылки для тренера */}
+                    {currentUser?.role === 'trainer' && (
+                        <>
+                            <li className="menu-divider"></li>
+                            <li><h3 className="menu_section_title">Тренер</h3></li>
+                            <li><Link to="/schedule" onClick={toggleMenu}>Мое расписание</Link></li>
+                            {/* Можно добавить другие ссылки для тренера, например, профиль */}
+                        </>
+                    )}
+
+                    {/* Ссылки для администратора */}
                     {currentUser?.role === 'admin' && (
                         <>
-                            <li><a href="/direction-edit">Управление направлениями</a></li>
-                            <li><a href="/users">Пользователи</a></li>
-                            <li><a href="/categories">Категории</a></li>
+                            <li className="menu-divider"></li>
+                            <li><h3 className="menu_section_title">Управление</h3></li>
+                            <li><Link to="/schedule" onClick={toggleMenu}>Расписание (Админ)</Link></li>
+                            <li><Link to="/admin/trainers" onClick={toggleMenu}>Тренеры</Link></li>
+                            <li><Link to="/admin/users" onClick={toggleMenu}>Пользователи</Link></li>
+                            <li><Link to="/admin/categories" onClick={toggleMenu}>Категории</Link></li>
+                            <li><Link to="/admin/direction-edit" onClick={toggleMenu}>Направления</Link></li>
+                            <li><Link to="/admin/subscriptions" onClick={toggleMenu}>Абонементы</Link></li>
+                            <li><Link to="/admin/articles/edit" onClick={toggleMenu}>Управление статьями</Link></li>
+                            {/* Добавьте другие ссылки, если нужно */}
                         </>
                     )}
                 </ul>

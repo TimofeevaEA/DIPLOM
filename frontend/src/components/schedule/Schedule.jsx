@@ -240,11 +240,23 @@ const Schedule = () => {
                 className="schedule-cell-content"
                 onClick={() => setSelectedSchedule(item)}
             >
+                {isAdmin && !item.is_completed && (
+                    <button 
+                        className="delete-training-btn"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteTraining(item.id);
+                        }}
+                        title="Удалить тренировку"
+                    >
+                        × 
+                    </button>
+                )}
                 <div className={`training-item ${item.is_completed ? 'completed' : ''}`}>
                     <div className="training-name">{item.direction_name}</div>
                     <div className="trainer-name">{item.trainer_name}</div>
                     <div className="capacity">
-                        Мест: {item.spots_left || 0}/{item.capacity}
+                        Мест: {item.spots_left !== undefined ? item.spots_left : item.capacity}/{item.capacity}
                     </div>
                 </div>
             </div>
@@ -284,21 +296,26 @@ const Schedule = () => {
   };
 
   const handleDeleteTraining = async (scheduleId) => {
-    if (window.confirm('Вы уверены, что хотите удалить эту тренировку?')) {
+    if (window.confirm('Вы уверены, что хотите удалить эту тренировку? Все связанные записи клиентов также будут удалены.')) {
         try {
             const response = await fetch(`/api/schedule/${scheduleId}`, {
                 method: 'DELETE'
             });
-
+    
             if (!response.ok) {
-                throw new Error('Failed to delete training');
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to delete training');
             }
-
+    
             // Обновляем данные расписания после удаления
-            fetchScheduleData(currentWeek.id);
+            if (currentWeek?.id) {
+                fetchScheduleData(currentWeek.id);
+            }
+            // Можно добавить сообщение об успехе, если используется система уведомлений
+            alert('Тренировка успешно удалена');
         } catch (error) {
             console.error('Error deleting training:', error);
-            alert('Ошибка при удалении тренировки');
+            alert('Ошибка при удалении тренировки: ' + error.message);
         }
     }
   };
