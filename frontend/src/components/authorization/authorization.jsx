@@ -27,6 +27,17 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
                 throw new Error(data.error || 'Ошибка авторизации');
             }
 
+            if (!data.user) {
+                throw new Error('Сервер не вернул данные пользователя');
+            }
+
+            const requiredFields = ['id', 'name', 'email', 'role', 'phone'];
+            const missingFields = requiredFields.filter(field => !data.user[field]);
+            
+            if (missingFields.length > 0) {
+                throw new Error('Неполные данные пользователя');
+            }
+
             onLogin(data.user);
             onClose();
         } catch (error) {

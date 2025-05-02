@@ -1,0 +1,93 @@
+.trainer-profile {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.trainer-header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.trainer-header h1 {
+    color: #333;
+    font-size: 2rem;
+}
+
+.trainer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.trainer-info-card,
+.trainer-salary-card,
+.trainer-schedule-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.trainer-info-card h2,
+.trainer-salary-card h2,
+.trainer-schedule-card h2 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #C62E77;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row span:first-child {
+    color: #666;
+}
+
+.info-row span:last-child {
+    font-weight: 500;
+    color: #333;
+}
+
+.info-row.highlight {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.info-row.highlight span:last-child {
+    color: #C62E77;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.salary-info {
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+@media (max-width: 768px) {
+    .trainer-profile {
+        margin: 20px auto;
+    }
+
+    .trainer-content {
+        grid-template-columns: 1fr;
+    }
+
+    .trainer-header h1 {
+        font-size: 1.5rem;
+    }
+} 

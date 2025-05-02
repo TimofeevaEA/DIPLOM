@@ -4,6 +4,7 @@ import Directions from '../directions/Directions';
 import ViewTrainer from '../trainer/ViewTrainer';
 import RecentArticles from '../article/RecentArticles';
 import TodaySchedule from '../client/schedule/TodaySchedule';
+import ClientSubscriptions from '../subscriptions/ClientSubscriptions';
 function Home() {
     return (
         <div className="home">
@@ -12,6 +13,7 @@ function Home() {
             <ViewTrainer />
             <TodaySchedule />
             <RecentArticles />
+            <ClientSubscriptions />
            
         </div>
     );

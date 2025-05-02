@@ -4,6 +4,10 @@ import os
 from ..models.trainer import Trainer
 from ..models.user import User
 from .. import db
+from ..models.week_schedule import Week, Schedule
+from ..models.client_schedule import ClientSchedule
+from datetime import datetime, timedelta
+from calendar import monthrange
 
 trainers = Blueprint('trainers', __name__)
 
@@ -105,4 +109,60 @@ def delete_trainer(id):
         db.session.commit()
         return '', 204
     except Exception as e:
-        return jsonify({'error': str(e)}), 400 
+        return jsonify({'error': str(e)}), 400
+
+@trainers.route('/api/trainer/salary', methods=['GET'])
+def calculate_salary():
+    try:
+        month = int(request.args.get('month'))
+        year = int(request.args.get('year'))
+        trainer_id = request.args.get('trainer_id')
+        if not trainer_id:
+            return jsonify({'error': 'ID тренера не указан'}), 400
+
+        # Первый и последний день месяца
+        first_day = datetime(year, month, 1)
+        last_day = datetime(year, month, monthrange(year, month)[1])
+
+        # Берём все недели, которые хоть как-то пересекаются с месяцем
+        weeks = Week.query.filter(
+            Week.end_date >= first_day,
+            Week.start_date <= last_day
+        ).all()
+
+        lessons_count = 0
+        total_clients = 0
+
+        for week in weeks:
+            week_start = week.start_date
+            # Берём все занятия тренера на этой неделе
+            schedules = Schedule.query.filter_by(
+                week_id=week.id,
+                trainer_id=trainer_id,
+                is_completed=True
+            ).all()
+            for schedule in schedules:
+                # Вычисляем дату тренировки
+                lesson_date = week_start + timedelta(days=schedule.day_of_week - 1)
+                if lesson_date.month == month and lesson_date.year == year:
+                    lessons_count += 1
+                    clients = ClientSchedule.query.filter_by(
+                        schedule_id=schedule.id,
+                        status='Посетил'
+                    ).count()
+                    total_clients += clients
+
+        return jsonify({
+            'lessonsCount': lessons_count,
+            'totalClients': total_clients
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@trainers.route('/api/trainer/by_user/<int:user_id>', methods=['GET'])
+def get_trainer_by_user(user_id):
+    trainer = Trainer.query.filter_by(user_id=user_id).first()
+    if trainer:
+        return jsonify({'trainer_id': trainer.id})
+    return jsonify({'error': 'Тренер не найден'}), 404 

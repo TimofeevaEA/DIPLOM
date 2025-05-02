@@ -20,12 +20,14 @@ def login():
         user = User.query.filter_by(email=data['email']).first()
 
         if user and user.password == data['password']:  # В реальном приложении используйте хеширование
+            print("User found:", user.id, user.name, user.email, user.phone)  # Добавляем логирование
             return jsonify({
                 'user': {
                     'id': user.id,
                     'name': user.name,
                     'email': user.email,
-                    'role': user.role
+                    'role': user.role,
+                    'phone': user.phone
                 }
             }), 200
         else:
@@ -85,7 +87,8 @@ def register():
                 'id': user.id,
                 'name': user.name,
                 'email': user.email,
-                'role': user.role
+                'role': user.role,
+                'phone': user.phone
             },
             'message': 'Регистрация успешна'
         }), 201
@@ -98,5 +101,42 @@ def register():
 @auth_bp.route('/api/authorization/logout', methods=['POST'])
 def logout():
     return jsonify({'message': 'Вы успешно вышли из учетной записи'}), 200
+
+#сменить пароль
+@auth_bp.route('/api/authorization/change-password', methods=['POST'])
+def change_password():
+    try:
+        data = request.json
+        
+        if not data or 'currentPassword' not in data or 'newPassword' not in data or 'email' not in data:
+            return jsonify({
+                'error': 'Текущий пароль, новый пароль и email обязательны'
+            }), 400
+
+        # Получаем пользователя по email
+        current_user = User.query.filter_by(email=data['email']).first()
+        
+        if not current_user:
+            return jsonify({
+                'error': 'Пользователь не найден'
+            }), 404
+
+        # Проверяем текущий пароль
+        if current_user.password != data['currentPassword']:  # В реальном приложении используйте хеширование
+            return jsonify({
+                'error': 'Неверный текущий пароль'
+            }), 401
+
+        # Обновляем пароль
+        current_user.password = data['newPassword']  # В реальном приложении используйте хеширование
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Пароль успешно изменен'
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 

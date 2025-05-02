@@ -7,7 +7,16 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    
+    # Настройка CORS
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": ["http://localhost:5173", "http://localhost:3000"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "supports_credentials": True
+        }
+    })
     
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///iva.sqlite'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -45,6 +54,7 @@ def create_app():
     from .routes.room_routes import rooms_bp
     from .routes.article_routes import articles_bp  # Добавляем импорт роутов для статей
     from .routes.client_schedule_routes import client_schedule_bp
+    from .routes.admin_routes import admin_bp
     
     app.register_blueprint(user_bp)
     app.register_blueprint(auth_bp)
@@ -58,6 +68,7 @@ def create_app():
     app.register_blueprint(rooms_bp)
     app.register_blueprint(articles_bp)  # Регистрируем блюпринт для статей
     app.register_blueprint(client_schedule_bp)
+    app.register_blueprint(admin_bp)
     
     with app.app_context():
         db.create_all()

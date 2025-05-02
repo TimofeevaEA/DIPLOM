@@ -3,7 +3,8 @@ import './header.css';
 import menuIcon from '/img/header/menu.png';
 import profileIcon from '/img/header/profile.png';
 import AuthModal from '../authorization/authorization';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { authAPI } from '../../api';
 
 function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,6 +15,7 @@ function Header() {
         return savedUser ? JSON.parse(savedUser) : null;
     });
     const [scrollPosition, setScrollPosition] = useState(0);
+    const navigate = useNavigate();
 
     const toggleMenu = () => {
         if (!isMenuOpen) {
@@ -38,33 +40,44 @@ function Header() {
     };
 
     const handleLogin = (user) => {
-        // Добавляем роль в объект пользователя, если её нет
         const userWithRole = {
             ...user,
-            role: user.role || 'user' // По умолчанию роль 'user', если не указана
+            role: user.role || 'user'
         };
+        
         setCurrentUser(userWithRole);
-        // Сохраняем пользователя в localStorage
         localStorage.setItem('currentUser', JSON.stringify(userWithRole));
-        // Добавляем событие для обновления App
+        setIsAuthModalOpen(false);
         window.dispatchEvent(new Event('authChange'));
     };
 
     const handleLogout = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/authorization/logout', {
-                method: 'POST',
-            });
-
-            if (response.ok) {
-                setCurrentUser(null);
-                // Удаляем пользователя из localStorage
-                localStorage.removeItem('currentUser');
-                // Добавляем событие для обновления App
-                window.dispatchEvent(new Event('authChange'));
+            await authAPI.logout();
+            localStorage.removeItem('currentUser');
+            setCurrentUser(null);
+            if (isMenuOpen) {
+                toggleMenu();
             }
+            window.dispatchEvent(new Event('authChange'));
+            navigate('/');
         } catch (error) {
             console.error('Ошибка при выходе:', error);
+        }
+    };
+
+    const handleProfileClick = () => {
+        if (currentUser) {
+            // Перенаправляем на соответствующий профиль в зависимости от роли
+            if (currentUser.role === 'trainer') {
+                navigate('/profile/trainer');
+            } else if (currentUser.role === 'admin') {
+                navigate('/profile/admin');
+            } else {
+                navigate('/profile/client');
+            }
+        } else {
+            setIsAuthModalOpen(true);
         }
     };
 
@@ -80,24 +93,13 @@ function Header() {
                 </a>
                 <a href="#" className="header_link logo">LOGO</a>
                 <div className="profile-section">
-                    {currentUser ? (
-                        <>
-                            <span className="user-name">{currentUser.name}</span>
-                            <a href="#" className="header_link" onClick={(e) => {
-                                e.preventDefault();
-                                handleLogout();
-                            }}>
-                                <img src={profileIcon} alt="Выйти" />
-                            </a>
-                        </>
-                    ) : (
-                        <a href="#" className="header_link" onClick={(e) => {
-                            e.preventDefault();
-                            setIsAuthModalOpen(true);
-                        }}>
-                            <img src={profileIcon} alt="Войти" />
-                        </a>
-                    )}
+                    {currentUser && <span className="user-name">{currentUser.name}</span>}
+                    <a href="#" className="header_link" onClick={(e) => {
+                        e.preventDefault();
+                        handleProfileClick();
+                    }}>
+                        <img src={profileIcon} alt={currentUser ? "Профиль" : "Войти"} />
+                    </a>
                 </div>
             </div>
 
@@ -112,7 +114,10 @@ function Header() {
                     
                     {/* Ссылки для клиента (если залогинен и не админ/тренер) */}
                     {currentUser && currentUser.role === 'user' && (
-                        <li><Link to="/schedule" onClick={toggleMenu}>Мое расписание</Link></li>
+                        <>
+                            <li><Link to="/schedule" onClick={toggleMenu}>Мое расписание</Link></li>
+                            <li><Link to="/profile/client" onClick={toggleMenu}>Личный кабинет</Link></li>
+                        </>
                     )}
 
                     {/* Ссылки для тренера */}
@@ -121,7 +126,7 @@ function Header() {
                             <li className="menu-divider"></li>
                             <li><h3 className="menu_section_title">Тренер</h3></li>
                             <li><Link to="/schedule" onClick={toggleMenu}>Мое расписание</Link></li>
-                            {/* Можно добавить другие ссылки для тренера, например, профиль */}
+                            <li><Link to="/profile/trainer" onClick={toggleMenu}>Личный кабинет</Link></li>
                         </>
                     )}
 
@@ -137,8 +142,18 @@ function Header() {
                             <li><Link to="/admin/direction-edit" onClick={toggleMenu}>Направления</Link></li>
                             <li><Link to="/admin/subscriptions" onClick={toggleMenu}>Абонементы</Link></li>
                             <li><Link to="/admin/articles/edit" onClick={toggleMenu}>Управление статьями</Link></li>
-                            {/* Добавьте другие ссылки, если нужно */}
+                            <li><Link to="/profile/client" onClick={toggleMenu}>Личный кабинет</Link></li>
                         </>
+                    )}
+
+                    {currentUser && (
+                        <li>
+                            <a href="#" onClick={(e) => {
+                                e.preventDefault();
+                                handleLogout();
+                                toggleMenu();
+                            }}>Выйти</a>
+                        </li>
                     )}
                 </ul>
             </div>
