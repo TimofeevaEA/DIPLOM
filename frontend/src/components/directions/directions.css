@@ -294,3 +294,27 @@ h1:hover, h2:hover {
         font-size: 14px;
     }
 }
+
+.message-toast {
+    position: fixed;
+    top: 30px;
+    right: 40px;
+    z-index: 2000;
+    min-width: 260px;
+    max-width: 350px;
+    padding: 16px 28px;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #fff;
+    background: #333;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    opacity: 1;
+    transition: opacity 0.5s;
+    pointer-events: none;
+}
+.message-toast.success {
+    background: #28a745;
+}
+.message-toast.error {
+    background: #dc3545;
+}

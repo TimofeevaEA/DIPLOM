@@ -17,6 +17,13 @@ function Trainer() {
         fetchUsers();
     }, []);
 
+    useEffect(() => {
+        if (message) {
+            const timer = setTimeout(() => setMessage(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [message]);
+
     const fetchTrainers = async () => {
         try {
             const response = await fetch('http://localhost:5000/api/trainers');
@@ -190,7 +197,7 @@ function Trainer() {
                                 }}
                             />
                             <div className="info">
-                                <p>{trainer.description}</p>
+                                <p>{trainer.name}</p>
                             </div>
                         </div>
                         <div className="trainer-actions">

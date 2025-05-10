@@ -18,6 +18,13 @@ function DirectionEdit() {
     fetchCategories();
   }, []);
 
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   const fetchDirections = async () => {
     try {
       const response = await fetch('/api/directions');
@@ -101,14 +108,15 @@ function DirectionEdit() {
   };
 
   return (
-    <div className="container" style={{ marginTop: '100px' }}>
-      <h1>Управление направлениями</h1>
-      
+    <div className="container" style={{ marginTop: '100px', position: 'relative' }}>
+      {/* Сообщение в правом верхнем углу */}
       {message && (
-        <div className={`message ${message.type}`}>
+        <div className={`message-toast ${message.type}`}>
           {message.text}
         </div>
       )}
+
+      <h1>Управление направлениями</h1>
 
       <form onSubmit={handleSubmit} className="form-section">
         <div className="form-group">

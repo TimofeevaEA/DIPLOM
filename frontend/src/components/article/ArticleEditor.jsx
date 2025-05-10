@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import './ArticleEditor.css';
+import ArticleListView from './ArticleListView';
 
 const ArticleEditor = () => {
+    const [searchParams] = useSearchParams();
+    const id = searchParams.get('id');
+    const navigate = useNavigate();
     const [article, setArticle] = useState({
         title: '',
         content: '',
@@ -10,7 +15,39 @@ const ArticleEditor = () => {
         photo: null
     });
     const [preview, setPreview] = useState(null);
+    const [loading, setLoading] = useState(false);
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    useEffect(() => {
+        if (id) {
+            fetchArticle();
+        }
+    }, [id]);
+
+    const fetchArticle = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch(`/api/articles/${id}`);
+            if (!response.ok) {
+                throw new Error('Ошибка загрузки статьи');
+            }
+            const data = await response.json();
+            setArticle({
+                title: data.title,
+                content: data.content,
+                category: data.category,
+                photo: null
+            });
+            if (data.photo) {
+                setPreview(`/img/articles/${data.photo}`);
+            }
+        } catch (error) {
+            console.error('Ошибка при загрузке статьи:', error);
+            alert(error.message || 'Ошибка при загрузке статьи');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleEditorChange = (content, editor) => {
         setArticle(prev => ({
@@ -60,38 +97,47 @@ const ArticleEditor = () => {
         }
 
         try {
-            const response = await fetch('/api/articles', {
-                method: 'POST',
+            const url = id ? `/api/articles/${id}` : '/api/articles';
+            const method = id ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
                 body: formData
             });
             
             if (response.ok) {
                 const result = await response.json();
-                alert('Статья успешно создана!');
-                setArticle({
-                    title: '',
-                    content: '',
-                    category: 'sport',
-                    photo: null
-                });
-                setPreview(null);
+                alert(id ? 'Статья успешно обновлена!' : 'Статья успешно создана!');
+                if (!id) {
+                    setArticle({
+                        title: '',
+                        content: '',
+                        category: 'sport',
+                        photo: null
+                    });
+                    setPreview(null);
+                }
+                navigate('/articles');
             } else {
                 const error = await response.json();
-                throw new Error(error.message || 'Произошла ошибка при создании статьи');
+                throw new Error(error.message || 'Произошла ошибка');
             }
         } catch (error) {
-            console.error('Ошибка при создании статьи:', error);
-            alert(error.message || 'Произошла ошибка при создании статьи');
+            console.error('Ошибка:', error);
+            alert(error.message || 'Произошла ошибка');
         }
     };
 
+    if (loading) {
+        return <div className="loading">Загрузка...</div>;
+    }
+
     return (
-            
-            <div className="article-editor">
-                <h1>Создание новой статьи</h1>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="title">Название статьи:</label>
+        <div className="article-editor">
+            <h1>{id ? 'Редактирование статьи' : 'Создание новой статьи'}</h1>
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="title">Название статьи:</label>
                     <input
                         id="title"
                         type="text"
@@ -171,11 +217,12 @@ const ArticleEditor = () => {
                 <button 
                     type="submit" 
                     className="submit-btn"
-                    aria-label="Опубликовать статью"
+                    aria-label={id ? "Сохранить изменения" : "Опубликовать статью"}
                 >
-                    Опубликовать статью
+                    {id ? "Сохранить изменения" : "Опубликовать статью"}
                 </button>
             </form>
+            {!id && <ArticleListView />}
         </div>
     );
 };

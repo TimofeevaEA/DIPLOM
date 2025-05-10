@@ -111,6 +111,15 @@ export const scheduleAPI = {
         return response.json();
     },
 
+    // Получение текущей недели
+    getCurrentWeek: async (offset = 0) => {
+        const response = await fetch(`${BASE_URL}/schedule/current-week?offset=${offset}`);
+        if (!response.ok) {
+            throw new Error('Ошибка при получении текущей недели');
+        }
+        return response.json();
+    },
+
     // Запись на тренировку
     bookTraining: async (scheduleId, clientId) => {
         const response = await fetch(`${BASE_URL}/schedule/${scheduleId}/book`, {
@@ -122,6 +131,15 @@ export const scheduleAPI = {
         });
         if (!response.ok) {
             throw new Error('Ошибка при записи на тренировку');
+        }
+        return response.json();
+    },
+
+    // Получение предстоящих тренировок тренера
+    getUpcomingSchedule: async (trainerId) => {
+        const response = await fetch(`${BASE_URL}/schedule/upcoming?trainer_id=${trainerId}`);
+        if (!response.ok) {
+            throw new Error('Ошибка при загрузке расписания');
         }
         return response.json();
     }

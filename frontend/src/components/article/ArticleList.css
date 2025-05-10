@@ -30,7 +30,13 @@
 .articles-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 30px;
+    gap: 2rem;
+    padding: 2rem 0;
+    transition: opacity 0.15s ease-in-out;
+}
+
+.articles-grid.transitioning {
+    opacity: 0.5;
 }
 
 /* Стили для секции последних обновлений */

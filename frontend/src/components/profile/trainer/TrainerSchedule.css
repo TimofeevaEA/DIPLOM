@@ -1,0 +1,168 @@
+.trainer-schedule {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
+
+.week-info {
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.week-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.nav-button {
+    background: #C62E77;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+    background: #a82563;
+    transform: scale(1.1);
+}
+
+.week-info h3 {
+    color: #333;
+    font-size: 1.5em;
+    margin: 0;
+    position: relative;
+    display: inline-block;
+}
+
+.week-info h3::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: #C62E77;
+    border-radius: 2px;
+}
+
+.schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.schedule-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s, background 0.2s;
+}
+
+.schedule-card:hover {
+    background: #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+}
+
+.schedule-card__day {
+    font-weight: 600;
+    color: #C62E77;
+    font-size: 0.98em;
+    white-space: nowrap;
+}
+
+.schedule-card__time {
+    font-size: 0.98em;
+    color: #333;
+    font-weight: 500;
+    background: rgba(198, 46, 119, 0.10);
+    border-radius: 8px;
+    padding: 5px 12px;
+    white-space: nowrap;
+}
+
+.schedule-card__name {
+    color: #333;
+    font-size: 0.98em;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #C62E77;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error {
+    color: #dc3545;
+    text-align: center;
+    padding: 40px;
+}
+
+.retry-button {
+    background: #C62E77;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.retry-button:hover {
+    background: #a82563;
+    transform: translateY(-2px);
+}
+
+.no-schedule {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-style: italic;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px dashed #ddd;
+}
+
+@media (max-width: 600px) {
+    .schedule-card {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+        text-align: center;
+    }
+    .schedule-card__name {
+        text-align: center;
+    }
+} 

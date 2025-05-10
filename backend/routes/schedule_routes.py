@@ -5,7 +5,7 @@ from ..models.trainer import Trainer
 from ..models.client_schedule import ClientSchedule
 from ..models.purchased_subscription import PurchasedSubscription
 from .. import db
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 schedule_bp = Blueprint('schedule', __name__)
 
@@ -13,8 +13,11 @@ schedule_bp = Blueprint('schedule', __name__)
 @schedule_bp.route('/api/schedule/week/<int:week_id>', methods=['GET'])
 def get_schedule_by_week(week_id):
     try:
+        print(f"Getting schedule for week_id: {week_id}")
         schedules = Schedule.query.filter_by(week_id=week_id).all()
-        return jsonify([schedule.to_json() for schedule in schedules])
+        schedule_json = [schedule.to_json() for schedule in schedules]
+        print(f"Found schedules: {schedule_json}")
+        return jsonify(schedule_json)
     except Exception as e:
         print(f"Error fetching schedule: {str(e)}") 
         return jsonify({'error': str(e)}), 500
@@ -322,4 +325,85 @@ def get_today_schedule():
         'trainer_name': item.trainer.user.name,
         'capacity': item.capacity,
         'spots_left': item.spots_left
-    } for item in schedule]) 
+    } for item in schedule])
+
+@schedule_bp.route('/api/schedule/current-week', methods=['GET'])
+def get_current_week():
+    try:
+        today = datetime.now().date()
+        week_offset = request.args.get('offset', default=0, type=int)
+        
+        # Находим неделю, которая содержит текущую дату
+        current_week = Week.query.filter(
+            Week.start_date <= today,
+            Week.end_date >= today
+        ).first()
+        
+        if not current_week:
+            return jsonify({'error': 'Не найдена текущая неделя'}), 404
+            
+        # Если есть смещение, находим соответствующую неделю
+        if week_offset != 0:
+            # Получаем все недели, отсортированные по дате начала
+            weeks = Week.query.order_by(Week.start_date).all()
+            current_index = weeks.index(current_week)
+            target_index = current_index + week_offset
+            
+            if 0 <= target_index < len(weeks):
+                current_week = weeks[target_index]
+            else:
+                return jsonify({'error': 'Неделя не найдена'}), 404
+            
+        return jsonify({
+            'id': current_week.id,
+            'start_date': current_week.start_date.strftime('%Y-%m-%d'),
+            'end_date': current_week.end_date.strftime('%Y-%m-%d')
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@schedule_bp.route('/api/schedule/upcoming', methods=['GET'])
+def get_upcoming_schedule():
+    try:
+        trainer_id = request.args.get('trainer_id', type=int)
+        if not trainer_id:
+            return jsonify({'error': 'Не указан trainer_id'}), 400
+
+        # Получаем текущую дату и время
+        now = datetime.now()
+        current_weekday = now.isoweekday()  # 1 = Понедельник, 7 = Воскресенье
+        current_time = now.time()
+
+        # Находим текущую неделю
+        current_week = Week.query.filter(
+            Week.start_date <= now.date(),
+            Week.end_date >= now.date()
+        ).first()
+
+        if not current_week:
+            return jsonify({'error': 'Не найдена текущая неделя'}), 404
+
+        # Получаем расписание для текущей недели
+        schedule = Schedule.query.filter(
+            Schedule.week_id == current_week.id,
+            Schedule.trainer_id == trainer_id
+        ).all()
+
+        # Фильтруем только предстоящие тренировки
+        upcoming = []
+        for lesson in schedule:
+            # Если день недели больше текущего - тренировка впереди
+            if lesson.day_of_week > current_weekday:
+                upcoming.append(lesson)
+            # Если это текущий день, проверяем время
+            elif lesson.day_of_week == current_weekday:
+                lesson_time = lesson.start_time if isinstance(lesson.start_time, time) else time(hour=int(lesson.start_time))
+                if lesson_time > current_time:
+                    upcoming.append(lesson)
+
+        return jsonify([lesson.to_json() for lesson in upcoming])
+
+    except Exception as e:
+        print(f"Error getting upcoming schedule: {str(e)}")
+        return jsonify({'error': str(e)}), 500 

@@ -30,6 +30,13 @@ const Users = () => {
         fetchUsers();
     }, []);
 
+    useEffect(() => {
+        if (success) {
+            const timer = setTimeout(() => setSuccess(''), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [success]);
+
     // Создание/обновление пользователя
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -136,7 +143,9 @@ const Users = () => {
                     <h2>{editingId ? 'Редактировать пользователя' : 'Создать пользователя'}</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
+                            <label htmlFor="user-name">Имя</label>
                             <input
+                                id="user-name"
                                 type="text"
                                 placeholder="Имя"
                                 value={formData.name}
@@ -147,7 +156,9 @@ const Users = () => {
                             />
                         </div>
                         <div className="form-group">
+                            <label htmlFor="user-email">Email</label>
                             <input
+                                id="user-email"
                                 type="email"
                                 placeholder="Email"
                                 value={formData.email}
@@ -158,7 +169,9 @@ const Users = () => {
                             />
                         </div>
                         <div className="form-group">
+                            <label htmlFor="user-phone">Телефон</label>
                             <input
+                                id="user-phone"
                                 type="tel"
                                 placeholder="Телефон"
                                 value={formData.phone}
@@ -169,7 +182,9 @@ const Users = () => {
                             />
                         </div>
                         <div className="form-group">
+                            <label htmlFor="user-password">Пароль</label>
                             <input
+                                id="user-password"
                                 type="password"
                                 placeholder="Пароль"
                                 value={formData.password}
@@ -180,7 +195,9 @@ const Users = () => {
                             />
                         </div>
                         <div className="form-group">
+                            <label htmlFor="user-birthdate">Дата рождения</label>
                             <input
+                                id="user-birthdate"
                                 type="date"
                                 value={formData.birth_date}
                                 onChange={(e) => setFormData({...formData, birth_date: e.target.value})}
@@ -190,7 +207,9 @@ const Users = () => {
                             />
                         </div>
                         <div className="form-group">
+                            <label htmlFor="user-role">Роль</label>
                             <select
+                                id="user-role"
                                 title="Выберите роль пользователя"
                                 aria-label="Выберите роль пользователя"
                                 value={formData.role}

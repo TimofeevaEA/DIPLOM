@@ -4,23 +4,39 @@ import './ArticleList.css';
 
 const RecentArticles = () => {
     const [articles, setArticles] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         fetchRecentArticles();
     }, []);
 
     const fetchRecentArticles = async () => {
+        setLoading(true);
         try {
             const response = await fetch('/api/articles');
             if (!response.ok) {
                 throw new Error('Ошибка при загрузке статей');
             }
             const data = await response.json();
-            setArticles(data.slice(0, 4));
+            const articlesData = data.articles || data;
+            const recentArticles = Array.isArray(articlesData) ? articlesData.slice(0, 4) : [];
+            setArticles(recentArticles);
         } catch (error) {
-            console.error('Ошибка:', error);
+            console.error('Ошибка загрузки статей:', error);
+            setError(error.message);
+        } finally {
+            setLoading(false);
         }
     };
+
+    if (loading) {
+        return <div className="loading">Загрузка статей...</div>;
+    }
+
+    if (error) {
+        return <div className="error">Ошибка загрузки статей: {error}</div>;
+    }
 
     if (articles.length === 0) {
         return null;
@@ -32,7 +48,7 @@ const RecentArticles = () => {
                 <div className="recent-articles-header">
                     <h1>ОБНОВЛЕНИЯ</h1>
                     <p className="subtitle">
-                        Последнии изменения,<br />
+                        Последние изменения,<br />
                         внесенные в содержание статей.
                     </p>
                     <p className="info-text">
@@ -64,7 +80,6 @@ const RecentArticles = () => {
                     ))}
                 </div>
             </div>
-            
         </section>
     );
 };

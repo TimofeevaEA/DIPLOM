@@ -1,0 +1,135 @@
+.article-list-view {
+    margin-top: 40px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    padding: 32px 24px;
+}
+
+.article-list-view h2 {
+    margin-bottom: 18px;
+    color: #C62E77;
+    font-size: 1.3em;
+}
+
+.article-search-input {
+    width: 100%;
+    max-width: 350px;
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 18px;
+    font-size: 1em;
+}
+
+.article-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 18px;
+    background: #faf9fa;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.article-table th, .article-table td {
+    padding: 12px 10px;
+    text-align: left;
+}
+
+.article-table th {
+    background: #f3e6ef;
+    color: #C62E77;
+    font-weight: 600;
+    border-bottom: 2px solid #e5d0e0;
+}
+
+.article-table tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.article-table tr:hover {
+    background: #f3e6ef;
+}
+
+.article-table button {
+    margin-right: 8px;
+    padding: 5px 12px;
+    border: none;
+    border-radius: 5px;
+    background: #C62E77;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.97em;
+    transition: background 0.2s;
+}
+
+.article-table button:last-child {
+    margin-right: 0;
+    background: #dc3545;
+}
+
+.article-table button:hover {
+    background: #a82563;
+}
+
+.pagination {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.pagination button {
+    padding: 5px 12px;
+    border: none;
+    border-radius: 5px;
+    background: #f3e6ef;
+    color: #C62E77;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.pagination button.active, .pagination button:hover {
+    background: #C62E77;
+    color: #fff;
+}
+
+.pagination button:disabled {
+    background: #eee;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.article-loading-spinner {
+    width: 22px;
+    height: 22px;
+    border: 3px solid #f3e6ef;
+    border-top: 3px solid #C62E77;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.article-table.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+@media (max-width: 600px) {
+    .article-list-view {
+        padding: 16px 4px;
+    }
+    .article-table th, .article-table td {
+        padding: 7px 4px;
+        font-size: 0.97em;
+    }
+    .article-search-input {
+        max-width: 100%;
+    }
+} 

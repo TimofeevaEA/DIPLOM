@@ -1,6 +1,6 @@
 .trainer-profile {
     max-width: 1200px;
-    margin: 40px auto;
+    margin: 100px auto;
     padding: 0 20px;
 }
 
@@ -16,9 +16,18 @@
 
 .trainer-content {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-areas:
+        'personal schedule'
+        'password salary';
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto auto;
+    gap: 24px;
 }
+
+.grid-personal { grid-area: personal; }
+.grid-schedule { grid-area: schedule; }
+.grid-password { grid-area: password; }
+.grid-salary { grid-area: salary; }
 
 .trainer-info-card,
 .trainer-salary-card,
@@ -27,6 +36,7 @@
     border-radius: 15px;
     padding: 25px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
 }
 
 .trainer-info-card h2,
@@ -78,13 +88,20 @@
     padding: 15px;
 }
 
+@media (max-width: 900px) {
+    .trainer-content {
+        grid-template-areas:
+            'personal'
+            'schedule'
+            'password'
+            'salary';
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 768px) {
     .trainer-profile {
         margin: 20px auto;
-    }
-
-    .trainer-content {
-        grid-template-columns: 1fr;
     }
 
     .trainer-header h1 {

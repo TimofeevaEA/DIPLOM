@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ChangePassword from '../ChangePassword';
 import SalaryCalculator from './SalaryCalculator';
+import TrainerSchedule from './TrainerSchedule';
 import { authAPI, trainerAPI } from '../../../api';
 import './TrainerProfile.css';
 
@@ -28,6 +29,7 @@ function TrainerProfile() {
         // Загрузка данных тренера при монтировании компонента
         const savedUser = JSON.parse(localStorage.getItem('currentUser'));
         if (savedUser) {
+            console.log('Current user:', savedUser);
             setTrainerData(prev => ({
                 ...prev,
                 name: savedUser.name,
@@ -37,12 +39,14 @@ function TrainerProfile() {
             // Получаем trainer_id по user_id
             trainerAPI.getTrainerIdByUserId(savedUser.id)
                 .then(trainerId => {
+                    console.log('Got trainer ID:', trainerId);
                     setTrainerData(prev => ({
                         ...prev,
                         trainerId: trainerId
                     }));
                 })
-                .catch(() => {
+                .catch(err => {
+                    console.error('Error getting trainer ID:', err);
                     // trainerId не найден
                 });
         }
@@ -90,9 +94,8 @@ function TrainerProfile() {
             <div className="trainer-header">
                 <h1>Личный кабинет тренера</h1>
             </div>
-            
             <div className="trainer-content">
-                <div className="trainer-info-card">
+                <div className="trainer-info-card grid-personal" style={{gridArea: 'personal'}}>
                     <h2>Персональная информация</h2>
                     <div className="info-row">
                         <span>Имя:</span>
@@ -107,12 +110,18 @@ function TrainerProfile() {
                         <span>{trainerData.phone}</span>
                     </div>
                 </div>
-
-                <div className="trainer-info-card">
+                <div className="trainer-schedule-card grid-schedule" style={{gridArea: 'schedule'}}>
+                    <h2>Расписание занятий</h2>
+                    {trainerData.trainerId ? (
+                        <TrainerSchedule trainerId={trainerData.trainerId} />
+                    ) : (
+                        <div className="error">Не удалось загрузить расписание</div>
+                    )}
+                </div>
+                <div className="trainer-info-card grid-password" style={{gridArea: 'password'}}>
                     <ChangePassword />
                 </div>
-
-                <div className="trainer-salary-card">
+                <div className="trainer-salary-card grid-salary" style={{gridArea: 'salary'}}>
                     <SalaryCalculator onCalculate={calculateSalary} />
                     {salaryError && <div className="error-message">{salaryError}</div>}
                     {noData && <div className="info-message">Нет проведённых занятий за выбранный период.</div>}
@@ -136,11 +145,6 @@ function TrainerProfile() {
                             </div>
                         </div>
                     )}
-                </div>
-
-                <div className="trainer-schedule-card">
-                    <h2>Расписание занятий</h2>
-                    {/* Здесь будет компонент с расписанием */}
                 </div>
             </div>
         </div>

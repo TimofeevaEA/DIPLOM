@@ -32,15 +32,34 @@ def cleanup_old_files(days=7):
 @cross_origin()
 def get_articles():
     try:
-        # Добавляем фильтрацию по категории
+        # Параметры пагинации
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 10))
+        search = request.args.get('search', '').strip()
         category = request.args.get('category')
+
         query = Article.query
         if category:
             query = query.filter_by(category=category)
-        
-        # Добавляем сортировку по дате создания
-        articles = query.order_by(Article.created_at.desc()).all()
-        return jsonify([article.to_dict() for article in articles])
+        if search:
+            query = query.filter(
+                Article.title.ilike(f'%{search}%') | Article.content.ilike(f'%{search}%')
+            )
+        total = query.count()
+        articles = query.order_by(Article.created_at.desc()) \
+            .offset((page - 1) * per_page).limit(per_page).all()
+        return jsonify({
+            'articles': [
+                {
+                    'id': a.id,
+                    'title': a.title,
+                    'created_at': a.created_at.strftime('%Y-%m-%d %H:%M'),
+                    'category': a.category,
+                    'photo': a.photo
+                } for a in articles
+            ],
+            'total': total
+        })
     except Exception as e:
         current_app.logger.error(f"Error fetching articles: {str(e)}")
         return jsonify({'error': 'Internal Server Error'}), 500
