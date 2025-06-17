@@ -91,7 +91,7 @@ function Header() {
                     <img src={menuIcon} alt="Меню" />
                     <p className="header_text">МЕНЮ</p>
                 </a>
-                <a href="#" className="header_link logo">LOGO</a>
+                <a href="#" className="header_link logo">IVA FITNESS SPACE</a>
                 <div className="profile-section">
                     {currentUser && <span className="user-name">{currentUser.name}</span>}
                     <a href="#" className="header_link" onClick={(e) => {
@@ -141,6 +141,7 @@ function Header() {
                             <li><Link to="/admin/categories" onClick={toggleMenu}>Категории</Link></li>
                             <li><Link to="/admin/direction-edit" onClick={toggleMenu}>Направления</Link></li>
                             <li><Link to="/admin/subscriptions" onClick={toggleMenu}>Абонементы</Link></li>
+                            <li><Link to="/admin/purchase-subscription" onClick={toggleMenu}>Оформить абонемент</Link></li>
                             <li><Link to="/admin/articles/edit" onClick={toggleMenu}>Управление статьями</Link></li>
                             <li><Link to="/profile/client" onClick={toggleMenu}>Личный кабинет</Link></li>
                         </>

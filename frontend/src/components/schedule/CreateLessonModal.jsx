@@ -68,18 +68,18 @@ const CreateLessonModal = React.memo(({ cellData, onClose, onSave }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <h2>Создать тренировку</h2>
+    <div className="lesson-modal-overlay" onClick={onClose}>
+      <div className="lesson-modal-content" onClick={e => e.stopPropagation()}>
+        <h2 className="lesson-modal-title">Создать тренировку</h2>
         
-        <div className="cell-info">
+        <div className="lesson-modal-cell-info">
           <p>Время: {timeSlots[cellData.timeSlot]}</p>
           <p>День недели: {days[cellData.dayId]}</p>
           <p>Зал: {cellData.roomId}</p>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
+        <form onSubmit={handleSubmit} className="lesson-modal-form">
+          <div className="lesson-modal-form-group">
             <label>Направление:</label>
             <select 
               value={formData.direction_id} 
@@ -95,7 +95,7 @@ const CreateLessonModal = React.memo(({ cellData, onClose, onSave }) => {
             </select>
           </div>
 
-          <div className="form-group">
+          <div className="lesson-modal-form-group">
             <label>Тренер:</label>
             <select 
               value={formData.trainer_id} 
@@ -111,7 +111,7 @@ const CreateLessonModal = React.memo(({ cellData, onClose, onSave }) => {
             </select>
           </div>
 
-          <div className="form-group">
+          <div className="lesson-modal-form-group">
             <label>Количество мест:</label>
             <input 
               type="number" 
@@ -125,11 +125,11 @@ const CreateLessonModal = React.memo(({ cellData, onClose, onSave }) => {
             />
           </div>
 
-          <div className="modal-buttons">
-            <button type="button" onClick={onClose} className="cancel-btn">
+          <div className="lesson-modal-buttons">
+            <button type="button" onClick={onClose} className="lesson-modal-cancel-btn">
               Отмена
             </button>
-            <button type="submit" className="save-btn">
+            <button type="submit" className="lesson-modal-save-btn">
               Сохранить
             </button>
           </div>

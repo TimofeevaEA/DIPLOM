@@ -150,85 +150,92 @@ const TrainingClients = ({ scheduleId, onClose, onScheduleUpdate }) => {
     };
 
     return (
-        <div className="training-clients-modal">
-            <div className="modal-content">
-                <div className="modal-header">
-                    <h3>Клиенты на тренировке</h3>
-                    <button className="close-button" onClick={onClose}>×</button>
-                </div>
-
-                {bookedClients.map(client => (
-                    <div key={client.id} className="client-item">
-                        <div className="client-info">
-                            {!isCompleted ? (
-                                <input
-                                    type="checkbox"
-                                    checked={attendanceMap[client.id] || false}
-                                    onChange={() => handleAttendanceChange(client.id)}
-                                />
-                            ) : (
-                                <span className={`status-indicator ${client.status.toLowerCase()}`}>
-                                    {client.status === 'Посетил' ? '✓' : '✕'}
-                                </span>
-                            )}
-                            <span className="client-name">
-                                {client.client_name} {client.phone && `(${client.phone})`}
-                            </span>
-                            <span className="remaining-sessions">
-                                Осталось: {client.remaining_sessions || 0}
-                            </span>
-                        </div>
-                        {!isCompleted && (
-                            <button 
-                                className="delete-client-button"
-                                onClick={() => handleDeleteClient(client.id)}
-                            >
-                                ×
-                            </button>
-                        )}
+        <div className="training-clients-overlay" onClick={onClose}>
+            <div className="training-clients-modal" onClick={e => e.stopPropagation()}>
+                <div className="modal-content">
+                    <div className="modal-header compact-header">
+                        <h3>Клиенты на тренировке</h3>
+                        <button className="close-button" onClick={onClose}>×</button>
                     </div>
-                ))}
 
-                {!isCompleted && (
-                    <>
-                        <button 
-                            className="add-client-button"
-                            onClick={() => setShowAddForm(true)}
-                        >
-                            +
-                        </button>
-
-                        {showAddForm && (
-                            <div className="add-client-form">
-                                <input
-                                    type="text"
-                                    placeholder="Поиск клиента..."
-                                    value={searchQuery}
-                                    onChange={(e) => handleSearch(e.target.value)}
-                                    className="search-input"
-                                />
-                                <div className="search-results">
-                                    {searchResults.map(client => (
-                                        <div 
-                                            key={client.id} 
-                                            className="search-result-item"
-                                            onClick={() => handleBookClient(client.id)}
-                                        >
-                                            {client.name} {client.phone && `(${client.phone})`}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
+                    <div className="clients-list-block">
+                        {bookedClients.length === 0 && (
+                            <div className="no-clients">Нет клиентов</div>
                         )}
+                        {bookedClients.map(client => (
+                            <div key={client.id} className="client-item">
+                                <div className="client-info">
+                                    {!isCompleted ? (
+                                        <input
+                                            type="checkbox"
+                                            checked={attendanceMap[client.id] || false}
+                                            onChange={() => handleAttendanceChange(client.id)}
+                                        />
+                                    ) : (
+                                        <span className={`status-indicator ${client.status.toLowerCase()}`}>
+                                            {client.status === 'Посетил' ? '✓' : '✕'}
+                                        </span>
+                                    )}
+                                    <span className="client-name">
+                                        {client.client_name} {client.phone && `(${client.phone})`}
+                                    </span>
+                                    <span className="remaining-sessions">
+                                        Осталось: {client.remaining_sessions || 0}
+                                    </span>
+                                </div>
+                                {!isCompleted && (
+                                    <button 
+                                        className="delete-client-button"
+                                        onClick={() => handleDeleteClient(client.id)}
+                                    >
+                                        ×
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                    </div>
 
-                        <button 
-                            className="submit-button"
-                            onClick={handleSubmit}
-                        >
-                            Провести
-                        </button>
-                    </>
-                )}
+                    {!isCompleted && (
+                        <div className="clients-actions-block">
+                            <button 
+                                className="add-client-button compact-add-btn"
+                                onClick={() => setShowAddForm(true)}
+                            >
+                                +
+                            </button>
+
+                            {showAddForm && (
+                                <div className="add-client-form">
+                                    <input
+                                        type="text"
+                                        placeholder="Поиск клиента..."
+                                        value={searchQuery}
+                                        onChange={(e) => handleSearch(e.target.value)}
+                                        className="search-input"
+                                    />
+                                    <div className="search-results">
+                                        {searchResults.map(client => (
+                                            <div 
+                                                key={client.id} 
+                                                className="search-result-item"
+                                                onClick={() => handleBookClient(client.id)}
+                                            >
+                                                {client.name} {client.phone && `(${client.phone})`}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            <button 
+                                className="submit-button compact-submit-btn"
+                                onClick={handleSubmit}
+                            >
+                                Провести
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

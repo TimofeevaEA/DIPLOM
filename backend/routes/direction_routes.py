@@ -70,26 +70,35 @@ def update_direction(id):
     try:
         direction = Directions.query.get_or_404(id)
         
-        direction.name = request.form.get('name', direction.name)
-        direction.description = request.form.get('description', direction.description)
-        direction.category_id = request.form.get('category_id', direction.category_id)
+        # Обновляем основные поля
+        if 'name' in request.form:
+            direction.name = request.form['name']
+        if 'description' in request.form:
+            direction.description = request.form['description']
+        if 'category_id' in request.form:
+            direction.category_id = request.form['category_id']
         
+        # Обрабатываем фото
         if 'photo' in request.files:
             file = request.files['photo']
             if file and allowed_file(file.filename):
                 # Удаляем старое фото если оно существует
-                if direction.photo and os.path.exists(direction.photo[1:]):
-                    os.remove(direction.photo[1:])
+                if direction.photo:
+                    old_photo_path = os.path.join(UPLOAD_FOLDER, direction.photo)
+                    if os.path.exists(old_photo_path):
+                        os.remove(old_photo_path)
                 
+                # Сохраняем новое фото
                 filename = secure_filename(file.filename)
                 if not os.path.exists(UPLOAD_FOLDER):
                     os.makedirs(UPLOAD_FOLDER)
                 file.save(os.path.join(UPLOAD_FOLDER, filename))
-                direction.photo = f'/img/directions/{filename}'
+                direction.photo = filename
         
         db.session.commit()
         return jsonify(direction.to_json())
     except Exception as e:
+        db.session.rollback()
         return jsonify({'error': str(e)}), 400
 
 @directions.route('/api/directions/<int:id>', methods=['DELETE'])
@@ -98,11 +107,14 @@ def delete_direction(id):
         direction = Directions.query.get_or_404(id)
         
         # Удаляем фото если оно существует
-        if direction.photo and os.path.exists(direction.photo[1:]):
-            os.remove(direction.photo[1:])
+        if direction.photo:
+            photo_path = os.path.join(UPLOAD_FOLDER, direction.photo)
+            if os.path.exists(photo_path):
+                os.remove(photo_path)
         
         db.session.delete(direction)
         db.session.commit()
         return '', 204
     except Exception as e:
+        db.session.rollback()
         return jsonify({'error': str(e)}), 400 

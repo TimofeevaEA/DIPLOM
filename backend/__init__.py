@@ -1,9 +1,11 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_cors import CORS
 import os
 
 db = SQLAlchemy()
+migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
@@ -18,7 +20,7 @@ def create_app():
         }
     })
     
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///iva.sqlite'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:96293@localhost:5432/ivafit_db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     # Добавляем конфигурацию для загрузки файлов
@@ -29,6 +31,7 @@ def create_app():
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
     db.init_app(app)
+    migrate.init_app(app, db)
     
     # Импорт моделей
     from .models.categories import Categories
@@ -70,7 +73,4 @@ def create_app():
     app.register_blueprint(client_schedule_bp)
     app.register_blueprint(admin_bp)
     
-    with app.app_context():
-        db.create_all()
-        
     return app

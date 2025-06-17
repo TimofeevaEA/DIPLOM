@@ -59,55 +59,79 @@
     cursor: not-allowed;
 }
 
-/* Основное модальное окно */
-.training-clients-modal {
+/* Overlay для модального окна */
+.training-clients-overlay {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
 }
 
-/* Контент модального окна */
+.training-clients-modal {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+    max-width: 360px;
+    width: 96vw;
+    padding: 24px 18px 18px 18px;
+    position: relative;
+    animation: modalFadeIn 0.3s cubic-bezier(.4,2,.6,1) both;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 .modal-content {
-    padding: 20px;
-    
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* Заголовок */
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .modal-header h3 {
     margin: 0;
-    font-size: 18px;
-    font-weight: 500;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #C62E77;
 }
 
 .close-button {
     border: none;
     background: none;
-    font-size: 20px;
-    color: #666;
+    font-size: 2rem;
+    color: #C62E77;
     cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    transition: color 0.2s;
+}
+.close-button:hover {
+    color: #a02a5e;
 }
 
-/* Список клиентов */
 .client-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    margin-bottom: 8px;
+    padding: 14px 0;
+    border-bottom: 1px solid #f3e9f7;
+    font-size: 1.08rem;
 }
 
 .client-info {
@@ -117,103 +141,113 @@
 }
 
 .client-name {
-    font-size: 14px;
+    font-size: 1.08rem;
+    font-weight: 500;
 }
 
 .remaining-sessions {
-    background: #eee;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 13px;
-    color: #666;
+    background: #f3e9f7;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.98rem;
+    color: #C62E77;
+    margin-left: 8px;
 }
 
 .delete-client-button {
     border: none;
     background: none;
     color: #ff4081;
-    font-size: 18px;
+    font-size: 1.3rem;
     cursor: pointer;
+    padding: 2px 8px;
+    transition: color 0.2s;
+}
+.delete-client-button:hover {
+    color: #a02a5e;
 }
 
-/* Кнопка добавления */
 .add-client-button {
-    width: 45px;
-    height: 45px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    background: #ff4081;
+    background: linear-gradient(90deg, #C62E77 0%, #f48fb1 100%);
     color: white;
     border: none;
-    font-size: 24px;
+    font-size: 2rem;
     cursor: pointer;
     display: block;
-    margin: 20px auto;
+    margin: 24px auto 10px auto;
+    box-shadow: 0 2px 8px rgba(198,46,119,0.13);
+    transition: background 0.2s;
+}
+.add-client-button:hover {
+    background: linear-gradient(90deg, #a02a5e 0%, #f06292 100%);
 }
 
-/* Форма поиска */
 .add-client-form {
-    margin: 15px 0;
+    margin: 15px 0 10px 0;
 }
 
 .search-input {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
+    padding: 12px;
+    border: 1.5px solid #e0cbe0;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 1.08rem;
     margin-bottom: 10px;
+    background: #faf7fb;
+    transition: border 0.2s;
+}
+.search-input:focus {
+    border: 1.5px solid #C62E77;
+    outline: none;
 }
 
 .search-results {
     background: white;
-    border: 1px solid #ddd;
+    border: 1.5px solid #e0cbe0;
     border-radius: 8px;
     max-height: 200px;
     overflow-y: auto;
+    box-shadow: 0 2px 8px rgba(198,46,119,0.07);
 }
 
 .search-result-item {
-    padding: 10px;
+    padding: 12px;
     cursor: pointer;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #f3e9f7;
+    font-size: 1.08rem;
+    transition: background 0.15s;
 }
-
 .search-result-item:hover {
-    background: #f8f9fa;
+    background: #f3e9f7;
 }
 
-/* Кнопка "Провести" */
 .submit-button {
     width: 100%;
-    padding: 12px;
-    background: #ff4081;
+    padding: 15px;
+    background: linear-gradient(90deg, #C62E77 0%, #f48fb1 100%);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 15px;
+    border-radius: 10px;
+    font-size: 1.15rem;
+    font-weight: 600;
     cursor: pointer;
-    margin-top: 15px;
+    margin-top: 18px;
+    box-shadow: 0 2px 8px rgba(198,46,119,0.13);
+    transition: background 0.2s;
+}
+.submit-button:hover {
+    background: linear-gradient(90deg, #a02a5e 0%, #f06292 100%);
 }
 
-/* Индикаторы статуса */
 .status-indicator {
-    width: 20px;
-    height: 20px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 12px;
-}
-
-.status-indicator.посетил {
-    background: #4CAF50;
-    color: white;
-}
-
-.status-indicator.пропустил {
-    background: #f44336;
-    color: white;
+    width: 22px;
+    display: inline-block;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
 .booked-clients {
@@ -247,10 +281,17 @@
 }
 
 /* Стили для мобильных устройств */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
     .training-clients-modal {
-        width: 95vw;
-        padding: 15px;
+        padding: 10px 2vw 10px 2vw;
+        max-width: 99vw;
+    }
+    .modal-header h3 {
+        font-size: 1.1rem;
+    }
+    .submit-button {
+        font-size: 1rem;
+        padding: 10px;
     }
 }
 
@@ -266,4 +307,87 @@
     align-items: center;
     width: 100%;
     padding: 8px;
+}
+
+.compact-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.compact-header h3 {
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: #222;
+    letter-spacing: 0.01em;
+    margin: 0;
+}
+
+.clients-list-block {
+    min-height: 30px;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.no-clients {
+    color: #aaa;
+    text-align: center;
+    font-size: 1.02rem;
+    margin: 10px 0 0 0;
+}
+
+.clients-actions-block {
+    width: 100%;
+    background: #faf7fb;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(198,46,119,0.07);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 0 0 0;
+    padding: 16px 0 12px 0;
+}
+
+.compact-add-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1.1rem;
+    margin: 0 0 2px 0;
+    box-shadow: none;
+}
+
+.compact-submit-btn {
+    width: 90%;
+    max-width: 220px;
+    font-size: 0.98rem;
+    padding: 8px 0;
+    margin: 0 auto 0 auto;
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+@media (max-width: 600px) {
+    .compact-header h3 {
+        font-size: 0.98rem;
+    }
+    .compact-submit-btn {
+        font-size: 0.93rem;
+        padding: 7px 0;
+    }
+    .compact-add-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+    }
+    .clients-actions-block {
+        padding: 10px 0 8px 0;
+    }
 } 
